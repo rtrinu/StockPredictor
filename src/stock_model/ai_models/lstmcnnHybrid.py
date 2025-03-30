@@ -11,7 +11,7 @@ from src.stock_model.ai_models.base_model import AIModel
 plt.style.use('fivethirtyeight')
 
 class CnnLSTMHybrid():
-    def __init__(self):
+    def __init__(self,df):
         self.data = None
         self.dataset = None
         self.training_data_len = None
@@ -33,7 +33,7 @@ class CnnLSTMHybrid():
         self.run()
         return self
 
-
+    # Change this so it can accept the df data
     def load_data(self):
         df = yf.download("MSFT", start="2012-01-01", end="2019-12-17")
         self.df = pd.DataFrame(df)

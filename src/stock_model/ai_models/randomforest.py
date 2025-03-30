@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 
 class RandomForestModel():
-    def __init__(self):
+    def __init__(self, df):
         self.feature_columns = ['Previous Close', 'Open', 'High', 'Low', 'Volume']
         self.target_column = 'Close'
 
@@ -19,7 +19,7 @@ class RandomForestModel():
         self.run()
         return self
 
-
+    #Change this so it can accept df data
     def load_data(self):
         df = yf.download("MSFT", start="2012-01-01", end="2019-12-17")
         df['Previous Close'] = df['Close'].shift(1)
