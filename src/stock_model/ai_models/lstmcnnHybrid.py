@@ -4,7 +4,7 @@ import pandas as pd
 import yfinance as yf
 from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.models import Sequential #type: ignore
-from tensorflow.keras.layers import Reshape, Conv1D, MaxPooling1D, LSTM, Dense, Flatten, Dropout #type: ignore
+from tensorflow.keras.layers import Input,Reshape, Conv1D, MaxPooling1D, LSTM, Dense, Flatten, Dropout #type: ignore
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau # type: ignore
 import matplotlib.pyplot as plt
 from src.stock_model.ai_models.base_model import AIModel
@@ -64,7 +64,8 @@ class CnnLSTMHybrid():
 
     def build_cnn_model(self):
         cnn_model = Sequential()
-        cnn_model.add(Conv1D(32, kernel_size=3, activation='relu', input_shape = (self.x_train.shape[1], 1)))
+        cnn_model.add(Input(shape=(self.x_train.shape[1], 1)))
+        cnn_model.add(Conv1D(32, kernel_size=3, activation='relu'))
         cnn_model.add(MaxPooling1D(pool_size=2))
         cnn_model.add(Flatten())
         cnn_model.add(Dense(30, activation='relu'))
@@ -72,7 +73,8 @@ class CnnLSTMHybrid():
 
     def build_lstm_model(self):
         lstm_model = Sequential()
-        lstm_model.add(LSTM(50, return_sequences=True, input_shape=(self.x_train.shape[1], 1)))
+        lstm_model.add(Input(shape=(self.x_train.shape[1], 1)))
+        lstm_model.add(LSTM(50, return_sequences=True))
         lstm_model.add(LSTM(50, return_sequences=False))
         lstm_model.add(Dense(25))
         self.lstm_model = lstm_model
@@ -114,7 +116,7 @@ class CnnLSTMHybrid():
 
     def plot_prediction(self):
         train = self.data[:self.training_data_len]
-        valid = self.data[self.training_data_len:]
+        valid = self.data[self.training_data_len:].copy()
         valid.loc[:,"Predictions"] = self.predictions
 
         plt.figure(figsize=(16,8))
