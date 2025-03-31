@@ -55,7 +55,7 @@ class Stock:
 
     def train_ai_models(self):
         print("Training AI...")
-        hybrid = CnnLSTMHybrid.create(self.df)
+        hybrid = CnnLSTMHybrid.create(self.df, self.stock_name)
         #random_forest = RandomForestModel(self.df)
         
         

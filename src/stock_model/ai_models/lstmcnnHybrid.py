@@ -1,17 +1,20 @@
+import os
 import math
 import numpy as np
 import pandas as pd
 import yfinance as yf
+import pickle
+import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.models import Sequential #type: ignore
 from tensorflow.keras.layers import Input,Reshape, Conv1D, MaxPooling1D, LSTM, Dense, Flatten, Dropout #type: ignore
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau # type: ignore
-import matplotlib.pyplot as plt
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from src.stock_model.ai_models.base_model import AIModel
 plt.style.use('fivethirtyeight')
 
 class CnnLSTMHybrid():
-    def __init__(self,df):
+    def __init__(self,df, stock_name):
         self.data = None
         self.dataset = None
         self.training_data_len = None
@@ -26,17 +29,43 @@ class CnnLSTMHybrid():
         self.hybrid_model = None
         self.predictions = None
         self.df = df
+        self.stock_name = stock_name
+        self.model_folder = "models"
         
 
     @classmethod
-    def create(cls,df):
-        self = cls(df)
+    def create(cls,df, stock_name):
+        self = cls(df, stock_name)
+        self.load_model()            
+        self.load_data()
+        self.preprocess_training_data()
+        self.preprocess_testing_data()
+        if self.hybrid_model is None:
+            self.run()
+        existing_mse, existing_mae, existing_r2 = self.evaluate_model()
         self.run()
+        self.prediction()
+        new_mse, new_mae, new_r2 = self.evaluate_model()
+        better_metrics_count = 0
+        if new_mse < existing_mse:
+            better_metrics_count += 1
+        if new_mae < existing_mae:
+            better_metrics_count += 1
+        if new_r2 > existing_r2:  
+            better_metrics_count += 1
+        if better_metrics_count >= 2:
+            print("Newer model is better. Saving the newer model.")
+            self.save_model()
+        else:
+            print("Using the existing model.")
+        self.plot_prediction()
+        
         return self
 
-    # Change this so it can accept the df data
     def load_data(self):
-        self.data = self.df[['Close']]
+        self.data = self.df[['Close', 'Previous_Close', 'Close_Shifted', 'Open_Shifted', 
+                         'High_Shifted', 'Low_Shifted', 'RSI', 'EMA_20', 
+                         'SMA_20', 'MACD', 'MACD_signal', 'MACD_histogram']]
         self.dataset = self.data.values
         self.training_data_len = math.ceil(len(self.dataset) * .8)
         self.scaler = MinMaxScaler(feature_range=(0,1))
@@ -46,25 +75,28 @@ class CnnLSTMHybrid():
         train_data = self.scaled_data[0:self.training_data_len, :]
         x_train = []
         y_train = []
+        num_features = train_data.shape[1]
         for i in range(30, len(train_data)):
-            x_train.append(train_data[i-30:i, 0])
+            x_train.append(train_data[i-30:i, :])
             y_train.append(train_data[i, 0])
 
         x_train, self.y_train = np.array(x_train), np.array(y_train)
-        self.x_train = np.reshape(x_train, (x_train.shape[0], x_train.shape[1], 1))
+        self.x_train = np.reshape(x_train, (x_train.shape[0], 30, num_features))
 
     def preprocess_testing_data(self):
         test_data = self.scaled_data[self.training_data_len - 30: , :]
         x_test = []
+        num_features = test_data.shape[1]
         self.y_test = self.dataset[self.training_data_len:, :]
         for i in range(30, len(test_data)):
-            x_test.append(test_data[i-30:i, 0])
+            x_test.append(test_data[i-30:i, :])
         self.x_test = np.array(x_test)
-        self.x_test = np.reshape(self.x_test, (self.x_test.shape[0], self.x_test.shape[1], 1))
+        self.x_test = np.reshape(self.x_test, (self.x_test.shape[0], 30, num_features))
 
     def build_cnn_model(self):
         cnn_model = Sequential()
-        cnn_model.add(Input(shape=(self.x_train.shape[1], 1)))
+        # Adjust the input shape to match the number of features
+        cnn_model.add(Input(shape=(self.x_train.shape[1], self.x_train.shape[2])))  # Use the correct number of features
         cnn_model.add(Conv1D(32, kernel_size=3, activation='relu'))
         cnn_model.add(MaxPooling1D(pool_size=2))
         cnn_model.add(Flatten())
@@ -73,7 +105,7 @@ class CnnLSTMHybrid():
 
     def build_lstm_model(self):
         lstm_model = Sequential()
-        lstm_model.add(Input(shape=(self.x_train.shape[1], 1)))
+        lstm_model.add(Input(shape=(self.x_train.shape[1], self.x_train.shape[2])))  
         lstm_model.add(LSTM(50, return_sequences=True))
         lstm_model.add(LSTM(50, return_sequences=False))
         lstm_model.add(Dense(25))
@@ -99,20 +131,64 @@ class CnnLSTMHybrid():
                               callbacks=[early_stop, reduce_lr])
 
     def evaluate_model(self):
-        pass
+        self.output_predictions()
+        if self.output_predictions() is None:
+            print("No predictions available for evaluation")
+            return None, None, None
+        actual = self.scaler.inverse_transform(self.y_test.reshape(-1,1))
+        mse = mean_squared_error(actual, self.predictions)
+        mae = mean_absolute_error(actual, self.predictions)
+        r2 = r2_score(actual, self.predictions)
+
+        print(f"Mean Squared Error: {mse:.4f}")
+        print(f"Mean Absolute Error: {mae:.4f}")
+        print(f"R-squared Score: {r2:.4f}")
+
+        return mse, mae, r2
+
 
 
     def prediction(self):
-        predictions = self.hybrid_model.predict(self.x_test)
-        self.predictions = self.scaler.inverse_transform(predictions)
+        if self.hybrid_model is not None:
+            predictions = self.hybrid_model.predict(self.x_test)
+            return predictions
+        else:
+            print("Model is not loaded. Cannot make predictions")
+            return None
+    
+    def output_predictions(self):
+        predictions = self.prediction()
+        if predictions is not None:
+            self.predictions = self.scaler.inverse_transform(predictions)
+            return self.predictions
+        else:
+            self.predictions = None
+        
 
 
     def save_model(self):
-        pass
+        if not os.path.exists(self.model_folder):
+            os.makedirs(self.model_folder)
+            print(f"Model folder created.")
+        model_file = os.path.join(self.model_folder, f"{self.stock_name}_CNNLSTMModel_pickle")
+        
+        with open(model_file, 'wb') as f:
+            pickle.dump(self.hybrid_model, f)
+            print(f"Model saved.")
+
 
 
     def load_model(self):
-        pass
+        model_file = os.path.join(self.model_folder, f"{self.stock_name}_CNNLSTMModel_pickle")
+        try:
+            with open(model_file, 'rb') as f:
+                self.hybrid_model = pickle.load(f)
+                print(f"Model loaded successfully")
+        except FileNotFoundError:
+            print(f"Model file {model_file} not found. Proceeding to train a new model.")
+            self.hybrid_model = None
+        except Exception as e:
+            print(f"An unexpected error occurred while loading the model: {e}")
 
     def plot_prediction(self):
         train = self.data[:self.training_data_len]
@@ -130,16 +206,11 @@ class CnnLSTMHybrid():
 
 
     def run(self):
-        self.load_data()
-        self.preprocess_training_data()
-        self.preprocess_testing_data()
         self.build_cnn_model()
         self.build_lstm_model()
         self.combine_models()
         self.train()
-        self.prediction()
-        self.plot_prediction()
-        self.print_df()
+        
 
     def print_df(self):
         print(self.df)
