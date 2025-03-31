@@ -1,6 +1,6 @@
 from src.stock_model.dictionary import fetch_sp500_data, get_stock_symbol_from_name
 import datetime
-from dateutil.relativedelta import relativedelta
+from datetime import datetime, timedelta
 import yfinance as yf
 class StockDataUtils:
     def __init__(self, stock_symbol:str):
@@ -17,8 +17,10 @@ class StockDataUtils:
         return self.stock_symbol, self.stock_name
     
     def fetch_stock_data(self):
-        end_date = datetime.date.today()
-        start_date = end_date - relativedelta(months=5)
+        end_date = datetime.now()
+        years_for_training = 3
+        months_for_testing = 2
+        start_date = end_date - timedelta(days=years_for_training * 365 + months_for_testing * 30)
         self.user_stock_validation()
         print(f"Fetching data for '{self.stock_name}'...")
         self.df = yf.download(self.stock_symbol, start=start_date, end=end_date)

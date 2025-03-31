@@ -6,3 +6,5 @@ resources = [
 
 for resource in resources:
     nltk.download(resource)
+
+print("NLTK Setup Completed.")

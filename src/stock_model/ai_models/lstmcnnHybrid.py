@@ -25,19 +25,18 @@ class CnnLSTMHybrid():
         self.lstm_model = None
         self.hybrid_model = None
         self.predictions = None
+        self.df = df
         
 
     @classmethod
-    def create(cls):
-        self = cls()
+    def create(cls,df):
+        self = cls(df)
         self.run()
         return self
 
     # Change this so it can accept the df data
     def load_data(self):
-        df = yf.download("MSFT", start="2012-01-01", end="2019-12-17")
-        self.df = pd.DataFrame(df)
-        self.data = df[['Close']]
+        self.data = self.df[['Close']]
         self.dataset = self.data.values
         self.training_data_len = math.ceil(len(self.dataset) * .8)
         self.scaler = MinMaxScaler(feature_range=(0,1))
@@ -47,19 +46,19 @@ class CnnLSTMHybrid():
         train_data = self.scaled_data[0:self.training_data_len, :]
         x_train = []
         y_train = []
-        for i in range(60, len(train_data)):
-            x_train.append(train_data[i-60:i, 0])
+        for i in range(30, len(train_data)):
+            x_train.append(train_data[i-30:i, 0])
             y_train.append(train_data[i, 0])
 
         x_train, self.y_train = np.array(x_train), np.array(y_train)
         self.x_train = np.reshape(x_train, (x_train.shape[0], x_train.shape[1], 1))
 
     def preprocess_testing_data(self):
-        test_data = self.scaled_data[self.training_data_len - 60: , :]
+        test_data = self.scaled_data[self.training_data_len - 30: , :]
         x_test = []
         self.y_test = self.dataset[self.training_data_len:, :]
-        for i in range(60, len(test_data)):
-            x_test.append(test_data[i-60:i, 0])
+        for i in range(30, len(test_data)):
+            x_test.append(test_data[i-30:i, 0])
         self.x_test = np.array(x_test)
         self.x_test = np.reshape(self.x_test, (self.x_test.shape[0], self.x_test.shape[1], 1))
 
@@ -68,7 +67,7 @@ class CnnLSTMHybrid():
         cnn_model.add(Conv1D(32, kernel_size=3, activation='relu', input_shape = (self.x_train.shape[1], 1)))
         cnn_model.add(MaxPooling1D(pool_size=2))
         cnn_model.add(Flatten())
-        cnn_model.add(Dense(60, activation='relu'))
+        cnn_model.add(Dense(30, activation='relu'))
         self.cnn_model = cnn_model
 
     def build_lstm_model(self):
@@ -81,7 +80,7 @@ class CnnLSTMHybrid():
     def combine_models(self):
         hybrid_model = Sequential()
         hybrid_model.add(self.cnn_model)
-        hybrid_model.add(Reshape((60, 1)))
+        hybrid_model.add(Reshape((30, 1)))
         hybrid_model.add(self.lstm_model)
         hybrid_model.add(Dense(1))
         self.hybrid_model = hybrid_model
@@ -116,7 +115,7 @@ class CnnLSTMHybrid():
     def plot_prediction(self):
         train = self.data[:self.training_data_len]
         valid = self.data[self.training_data_len:]
-        valid['Predictions'] = self.predictions
+        valid.loc[:,"Predictions"] = self.predictions
 
         plt.figure(figsize=(16,8))
         plt.title('Model')
@@ -143,10 +142,5 @@ class CnnLSTMHybrid():
     def print_df(self):
         print(self.df)
 
-    def build(self):
-        return super().build()
-    
-    def load_and_preprocess_data(self):
-        return super().load_and_preprocess_data()
 
     

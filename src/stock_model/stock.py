@@ -1,6 +1,8 @@
 from src.stock_model.stockDataUtils import StockDataUtils
 from src.stock_model.technicalIndicatorUtils import TechnicalIndicatorUtil
 from src.stock_model.newsUtils import StockNews
+from src.stock_model.ai_models.lstmcnnHybrid import CnnLSTMHybrid
+from src.stock_model.ai_models.randomforest import RandomForestModel
 import pandas as pd
 class Stock:
     def __init__(self, stock_symbol:str):
@@ -18,7 +20,8 @@ class Stock:
         self.add_technical_signals()
         self.get_news_articles()
         self.create_ai_training_df()
-        self.print_df()
+        self.train_ai_models()
+        #self.print_df()
 
     def gather_data(self):
         self.stock_data_utils.fetch_stock_data()
@@ -49,6 +52,11 @@ class Stock:
         self.news_df = self.news_df.sort_values('Date').reset_index(drop=True)
         self.df['Compound Sentiment'] = self.news_df['Compound Sentiment']
         self.df.drop(['index'], axis=1)
+
+    def train_ai_models(self):
+        print("Training AI...")
+        hybrid = CnnLSTMHybrid.create(self.df)
+        #random_forest = RandomForestModel(self.df)
         
         
     def print_df(self):
