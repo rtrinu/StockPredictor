@@ -6,7 +6,7 @@ import pandas as pd
 from bs4 import BeautifulSoup
 from datetime import datetime as dt, timedelta
 from dotenv import load_dotenv
-from newsapi import newsapi_client
+from newsapi import NewsApiClient
 from nltk.sentiment import SentimentIntensityAnalyzer
 from dotenv import load_dotenv
 
@@ -22,7 +22,7 @@ class StockNews:
         :param news_api_key: str - Your NewsAPI key.
         """
         self.configure()
-        self.newsapi = newsapi_client.NewsApiClient(api_key=NEWSAPI_KEY)
+        self.newsapi = NewsApiClient(api_key=NEWSAPI_KEY)
         self.sia = SentimentIntensityAnalyzer()
         self.symbol = symbol
         self.df = None
