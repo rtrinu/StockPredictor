@@ -7,7 +7,7 @@ import pickle
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.models import Sequential #type: ignore
-from tensorflow.keras.layers import Input,Reshape, Conv1D, MaxPooling1D, LSTM, Dense, Flatten, Dropout #type: ignore
+from tensorflow.keras.layers import BatchNormalization,Input,Reshape, Conv1D, MaxPooling1D, LSTM, Dense, Flatten, Dropout #type: ignore
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau # type: ignore
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from src.stock_model.ai_models.base_model import AIModel
@@ -58,14 +58,13 @@ class CnnLSTMHybrid():
             self.save_model()
         else:
             print("Using the existing model.")
+            self.hybrid_model = self.load_model()
         self.plot_prediction()
         
         return self
 
     def load_data(self):
-        self.data = self.df[['Close', 'Previous_Close', 'Close_Shifted', 'Open_Shifted', 
-                         'High_Shifted', 'Low_Shifted', 'RSI', 'EMA_20', 
-                         'SMA_20', 'MACD', 'MACD_signal', 'MACD_histogram']]
+        self.data = self.df[['Close']]
         self.dataset = self.data.values
         self.training_data_len = math.ceil(len(self.dataset) * .8)
         self.scaler = MinMaxScaler(feature_range=(0,1))
@@ -93,40 +92,30 @@ class CnnLSTMHybrid():
         self.x_test = np.array(x_test)
         self.x_test = np.reshape(self.x_test, (self.x_test.shape[0], 30, num_features))
 
-    def build_cnn_model(self):
-        cnn_model = Sequential()
-        # Adjust the input shape to match the number of features
-        cnn_model.add(Input(shape=(self.x_train.shape[1], self.x_train.shape[2])))  # Use the correct number of features
-        cnn_model.add(Conv1D(32, kernel_size=3, activation='relu'))
-        cnn_model.add(MaxPooling1D(pool_size=2))
-        cnn_model.add(Flatten())
-        cnn_model.add(Dense(30, activation='relu'))
-        self.cnn_model = cnn_model
-
-    def build_lstm_model(self):
-        lstm_model = Sequential()
-        lstm_model.add(Input(shape=(self.x_train.shape[1], self.x_train.shape[2])))  
-        lstm_model.add(LSTM(50, return_sequences=True))
-        lstm_model.add(LSTM(50, return_sequences=False))
-        lstm_model.add(Dense(25))
-        self.lstm_model = lstm_model
-
-    def combine_models(self):
-        hybrid_model = Sequential()
-        hybrid_model.add(self.cnn_model)
-        hybrid_model.add(Reshape((30, 1)))
-        hybrid_model.add(self.lstm_model)
-        hybrid_model.add(Dense(1))
-        self.hybrid_model = hybrid_model
+    def build_model(self):
+        self.hybrid_model = Sequential([
+            Input(shape=(self.x_train.shape[1], self.x_train.shape[2])),
+            Conv1D(filters=64, kernel_size=3, activation='relu'),
+            BatchNormalization(),  
+            MaxPooling1D(pool_size=2),
+            LSTM(units=100, return_sequences=True),
+            Dropout(0.2),
+            LSTM(units=50, return_sequences=False),
+            Dropout(0.2),
+            Dense(units=1)
+        ])
+        
         self.hybrid_model.compile(optimizer='adam', loss='mean_squared_error')
+        self.hybrid_model.summary()
+
 
     def train(self):
         early_stop = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
         reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=5, min_lr=1e-6)
         self.hybrid_model.fit(self.x_train,
                               self.y_train,
-                              batch_size=1,
-                              epochs=1,
+                              batch_size=20,
+                              epochs=50,
                               validation_data=(self.x_test, self.y_test),
                               callbacks=[early_stop, reduce_lr])
 
@@ -206,9 +195,7 @@ class CnnLSTMHybrid():
 
 
     def run(self):
-        self.build_cnn_model()
-        self.build_lstm_model()
-        self.combine_models()
+        self.build_model()
         self.train()
         
 
