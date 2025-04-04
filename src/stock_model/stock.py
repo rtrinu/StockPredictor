@@ -2,8 +2,8 @@ from src.stock_model.stockDataUtils import StockDataUtils
 from src.stock_model.technicalIndicatorUtils import TechnicalIndicatorUtil
 from src.stock_model.newsUtils import StockNews
 from src.stock_model.ai_models.lstmcnnHybrid import CnnLSTMHybrid
-#from src.stock_model.ai_models.randomforest import RandomForestModel
-from src.stock_model.ai_models.exampleforest import randomForest
+from src.stock_model.ai_models.randomforest import randomForest
+
 import pandas as pd
 class Stock:
     def __init__(self, stock_symbol:str):
@@ -56,7 +56,7 @@ class Stock:
 
     def train_ai_models(self):
         print("Training AI...")
-        #hybrid = CnnLSTMHybrid.create(self.df, self.stock_name)
+        hybrid = CnnLSTMHybrid.create(self.df, self.stock_name)
         random_forest = randomForest.create(self.df, self.stock_name)
         
         

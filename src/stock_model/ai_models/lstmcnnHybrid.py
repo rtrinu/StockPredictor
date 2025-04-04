@@ -1,8 +1,6 @@
 import os
 import math
 import numpy as np
-import pandas as pd
-import yfinance as yf
 import pickle
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
@@ -102,11 +100,7 @@ class CnnLSTMHybrid():
             callbacks=[early_stop, reduce_lr],
             verbose=0
         )
-        plt.plot(history.history['loss'], label='Train')
-        plt.plot(history.history['val_loss'], label='Val')
-        plt.legend()
-        plt.title("Training vs Validation Loss")
-        plt.show()
+        
 
     def baseline_mae(self):
         mean_price = np.mean(self.dataset[:self.training_data_len])
