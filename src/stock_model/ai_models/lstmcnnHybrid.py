@@ -7,7 +7,7 @@ import pickle
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import BatchNormalization, Input, Conv1D, MaxPooling1D, LSTM, Dense, Dropout
+from tensorflow.keras.layers import Flatten,Reshape,BatchNormalization, Input, Conv1D, MaxPooling1D, LSTM, Dense, Dropout
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
@@ -67,17 +67,27 @@ class CnnLSTMHybrid():
         self.y_test = self.dataset[self.training_data_len:]
 
     def _build_model(self):
-        self.hybrid_model = Sequential([
-            Input(shape=(30, 1)),
-            Conv1D(filters=64, kernel_size=3, activation='relu'),
-            BatchNormalization(),
-            MaxPooling1D(pool_size=2),
-            LSTM(100, return_sequences=True),
-            Dropout(0.2),
-            LSTM(50),
-            Dropout(0.2),
-            Dense(1)
-        ])
+        cnn_model = Sequential()
+        cnn_model.add(Conv1D(64, kernel_size=3, activation='relu', input_shape=(self.x_train.shape[1], 1)))
+        cnn_model.add(MaxPooling1D(pool_size=2))
+        cnn_model.add(Flatten())
+        cnn_model.add(Dense(30, activation='relu'))
+        
+        self.cnn_model = cnn_model
+
+        lstm_model = Sequential()
+        lstm_model.add(LSTM(100, return_sequences=True, input_shape=(self.x_train.shape[1], 1)))
+        lstm_model.add(LSTM(50, return_sequences=False))
+        lstm_model.add(Dense(30))
+        
+        self.lstm_model = lstm_model
+
+        hybrid_model = Sequential()
+        hybrid_model.add(self.cnn_model)
+        hybrid_model.add(Reshape((30, 1)))
+        hybrid_model.add(self.lstm_model)
+        hybrid_model.add(Dense(1)) 
+        self.hybrid_model = hybrid_model
         self.hybrid_model.compile(optimizer='adam', loss='mean_squared_error')
 
     def _train(self):

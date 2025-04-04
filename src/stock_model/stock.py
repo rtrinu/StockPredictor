@@ -21,7 +21,7 @@ class Stock:
         self.get_news_articles()
         self.create_ai_training_df()
         self.train_ai_models()
-        #self.print_df()
+        self.print_df()
 
     def gather_data(self):
         self.stock_data_utils.fetch_stock_data()
