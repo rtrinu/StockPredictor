@@ -6,9 +6,9 @@ import yfinance as yf
 import pickle
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Flatten,Reshape,BatchNormalization, Input, Conv1D, MaxPooling1D, LSTM, Dense, Dropout
-from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
+from tensorflow.keras.models import Sequential #type: ignore
+from tensorflow.keras.layers import Flatten,Reshape, Conv1D, MaxPooling1D, LSTM, Dense #type: ignore
+from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau #type: ignore
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 plt.style.use('fivethirtyeight')

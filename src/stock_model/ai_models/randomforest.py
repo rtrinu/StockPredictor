@@ -1,4 +1,4 @@
-import math
+"""import math
 import numpy as np
 import pandas as pd
 import yfinance as yf
@@ -8,8 +8,8 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 
-class RandomForestModel():
-    def __init__(self):
+#class RandomForestModel():
+    def __init__(self, df):
         self.feature_columns = ['Previous Close', 'Open', 'High', 'Low', 'Volume']
         self.target_column = 'Close'
 
@@ -48,11 +48,6 @@ class RandomForestModel():
         mae = mean_absolute_error(self.y_test, self.predictions)
         r2 = r2_score(self.y_test, self.predictions)
 
-        print("Model Evaluation:")
-        print(f"Mean Squared Error: {mse}")
-        print(f"Mean Absolute Error: {mae}")
-        print(f"R-squared Score: {r2}")
-
     def plot_predictions(self):
         results = pd.DataFrame({
             'Actual': self.y_test,
@@ -78,4 +73,20 @@ class RandomForestModel():
         self.evaluate_model()
         self.plot_predictions()
 
+    def compare_models(self):
+        existing_mse, existing_mae, existing_r2 = self.evaluate_model()
+        self.run()
+        new_mse, new_mae, new_r2 = self.evaluate_model()
         
+        better = sum([new_mse < existing_mse, new_mae < existing_mae, new_r2 > existing_r2]) >= 2
+        
+        if better:
+            print("New model performs better. Saving the new model.")
+            self.save_model()
+        else:
+            print("Using the existing model.")
+            self.load_model()
+            self.output_predictions()
+            
+        self.plot_predictions()
+"""
