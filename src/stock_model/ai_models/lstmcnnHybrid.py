@@ -35,24 +35,13 @@ class CnnLSTMHybrid():
     def create(cls, df, stock_name):
         self = cls(df, stock_name)
         self.load_model()
-        self.load_data()
-        self.preprocess_training_data()
-        self.preprocess_testing_data()
+        self.load_and_preprocess_data()
         if self.hybrid_model is None:
             self.run()
-        existing_mse, existing_mae, existing_r2 = self.evaluate_model()
-        self.run()
-        new_mse, new_mae, new_r2 = self.evaluate_model()
-        better = sum([new_mse < existing_mse, new_mae < existing_mae, new_r2 > existing_r2]) >= 2
-        if better:
-            self.save_model()
-        else:
-            self.load_model()
-            self.output_predictions()
-        self.plot_prediction()
+        self.compare_models()
         return self
 
-    def load_data(self):
+    def _load_data(self):
         self.data = self.df[['Close']]
         self.dataset = self.data.values
         self.training_data_len = math.ceil(len(self.dataset) * .8)
@@ -60,7 +49,7 @@ class CnnLSTMHybrid():
         self.scaler.fit(self.dataset[:self.training_data_len])
         self.scaled_data = self.scaler.transform(self.dataset)
 
-    def preprocess_training_data(self):
+    def _preprocess_training_data(self):
         train_data = self.scaled_data[:self.training_data_len]
         x_train, y_train = [], []
         for i in range(30, len(train_data)):
@@ -69,7 +58,7 @@ class CnnLSTMHybrid():
         self.x_train = np.array(x_train)
         self.y_train = np.array(y_train)
 
-    def preprocess_testing_data(self):
+    def _preprocess_testing_data(self):
         test_data = self.scaled_data[self.training_data_len - 30:]
         x_test = []
         for i in range(30, len(test_data)):
@@ -77,7 +66,7 @@ class CnnLSTMHybrid():
         self.x_test = np.array(x_test)
         self.y_test = self.dataset[self.training_data_len:]
 
-    def build_model(self):
+    def _build_model(self):
         self.hybrid_model = Sequential([
             Input(shape=(30, 1)),
             Conv1D(filters=64, kernel_size=3, activation='relu'),
@@ -91,9 +80,9 @@ class CnnLSTMHybrid():
         ])
         self.hybrid_model.compile(optimizer='adam', loss='mean_squared_error')
 
-    def train(self):
-        early_stop = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
-        reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=5, min_lr=1e-6)
+    def _train(self):
+        early_stop = EarlyStopping(monitor='val_loss', patience=3, restore_best_weights=True)
+        reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.3, patience=2, min_lr=1e-6)
         history = self.hybrid_model.fit(
             self.x_train,
             self.y_train,
@@ -136,10 +125,10 @@ class CnnLSTMHybrid():
         return None
 
     def output_predictions(self):
-        preds = self._prediction()
-        if preds is not None:
-            padded = np.zeros((len(preds), self.scaled_data.shape[1]))
-            padded[:, 0] = preds[:, 0]
+        predictions = self._prediction()
+        if predictions is not None:
+            padded = np.zeros((len(predictions), self.scaled_data.shape[1]))
+            padded[:, 0] = predictions[:, 0]
             self.predictions = self.scaler.inverse_transform(padded)[:, 0]
         else:
             self.predictions = None
@@ -169,16 +158,28 @@ class CnnLSTMHybrid():
         plt.legend(['Train', 'Val', 'Predictions'], loc='lower right')
         plt.show()
 
-    def plot_comparison(self):
-        actual = self.y_test.flatten()
-        predicted = self.predictions
-        plt.figure(figsize=(16, 6))
-        plt.plot(actual, label='Actual')
-        plt.plot(predicted, label='Predicted')
-        plt.legend()
-        plt.title("Prediction vs Actual")
-        plt.show()
+    def load_and_preprocess_data(self):
+        self._load_data()
+        self._preprocess_training_data()
+        self._preprocess_testing_data()
 
     def run(self):
-        self.build_model()
-        self.train()
+        self._build_model()
+        self._train()
+
+    def compare_models(self):
+        existing_mse, existing_mae, existing_r2 = self.evaluate_model()
+        self.run()
+        new_mse, new_mae, new_r2 = self.evaluate_model()
+        
+        better = sum([new_mse < existing_mse, new_mae < existing_mae, new_r2 > existing_r2]) >= 2
+        
+        if better:
+            print("New model performs better. Saving the new model.")
+            self.save_model()
+        else:
+            print("Using the existing model.")
+            self.load_model()
+            self.output_predictions()
+            
+        self.plot_prediction()
