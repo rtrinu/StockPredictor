@@ -35,6 +35,7 @@ class CnnLSTMHybrid():
         self.load_model()
         self.load_and_preprocess_data()
         if self.hybrid_model is None:
+            print(f"No existing model for {self.stock_name}")
             self.run()
         self.compare_models()
         return self
@@ -89,7 +90,7 @@ class CnnLSTMHybrid():
         self.hybrid_model.compile(optimizer='adam', loss='mean_squared_error')
 
     def _train(self):
-        early_stop = EarlyStopping(monitor='val_loss', patience=3, restore_best_weights=True)
+        early_stop = EarlyStopping(monitor='val_loss', patience=15, restore_best_weights=True)
         reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.3, patience=2, min_lr=1e-6)
         history = self.hybrid_model.fit(
             self.x_train,
@@ -98,7 +99,7 @@ class CnnLSTMHybrid():
             epochs=50,
             validation_data=(self.x_test, self.scaler.transform(self.y_test)),
             callbacks=[early_stop, reduce_lr],
-            verbose=0
+            
         )
         
 

@@ -1,14 +1,14 @@
 from abc import ABC, abstractmethod
 
 class AIModel(ABC):
-    def __init__(self, filename:str, stock_name:str):
+    def __init__(self, df, stock_name:str):
         self.stock_name = stock_name
-        self.filename = filename
+        self.df = df
         self.model = None
 
     @classmethod
     @abstractmethod
-    def create(cls, filename:str, stock_name:str):
+    def create(cls, df, stock_name:str):
         pass
 
     @abstractmethod

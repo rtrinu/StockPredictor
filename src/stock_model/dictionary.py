@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 
 def fetch_sp500_data() -> dict:
         """
@@ -7,9 +8,12 @@ def fetch_sp500_data() -> dict:
 
         :return: dict - Dictionary with stock symbols as keys and company names as values.
         """
-        url = 'https://datahub.io/core/s-and-p-500-companies/r/constituents.csv'
-        sp500 = pd.read_csv(url)
-        sp500.to_csv('sp500_stocks.csv', index=False)
+        if not os.path.exists('sp500_stocks.csv'):
+            url = 'https://datahub.io/core/s-and-p-500-companies/r/constituents.csv'
+            sp500 = pd.read_csv(url)
+            sp500.to_csv('sp500_stocks.csv', index=False)
+        else:
+            sp500 = pd.read_csv('sp500_stocks.csv')
         return dict(zip(sp500['Symbol'], sp500['Security']))
 
 def get_stock_symbol_from_name(user_stock: str, stock_dict: dict) -> tuple:

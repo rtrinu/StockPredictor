@@ -4,6 +4,7 @@ from src.stock_model.newsUtils import StockNews
 from src.stock_model.ai_models.lstmcnnHybrid import CnnLSTMHybrid
 from src.stock_model.ai_models.randomforest import randomForest
 from src.stock_model.ai_models.lstmSignalModel import LstmSignalModel
+from src.stock_model.ai_models.decisiontree import DecisionTreeModel
 
 import pandas as pd
 class Stock:
@@ -59,8 +60,8 @@ class Stock:
         print("Training AI...")
         #hybrid = CnnLSTMHybrid.create(self.df, self.stock_name)
         #random_forest = randomForest.create(self.df, self.stock_name)
-        signal = LstmSignalModel.create(self.df, self.stock_name)
-        
+        #signal = LstmSignalModel.create(self.df, self.stock_name)
+        decision = DecisionTreeModel.create(self.df)
     def print_df(self):
         print(self.df)
         print(self.news_df)

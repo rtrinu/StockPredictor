@@ -6,11 +6,13 @@ from tensorflow.keras.models import Sequential #type: ignore
 from tensorflow.keras.layers import Activation, Input, LSTM, Dense, Dropout, BatchNormalization #type: ignore
 from tensorflow.keras.optimizers import Adam #type: ignore
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau #type: ignore
-from src.stock_model.ai_models.dualScalerPreprocessor import DualScalerPreprocessor
+from src.stock_model.dualScalerPreprocessor import DualScalerPreprocessor
+#from tensorflow.keras.utils import to_categorical
+
 
 
 class LstmSignalModel():
-    def __init__(self, df, stock_name, lookback=30):
+    def __init__(self, df, stock_name, lookback=60):
         self.df = df
         self.stock_name = stock_name
         self.model = None
@@ -70,26 +72,22 @@ class LstmSignalModel():
         self.y_test = np.array([label_map[y] for y in test_target[:len(x_test)]])
 
     def _build_model(self):
-        model = Sequential([
-            LSTM(50, input_shape=(self.lookback, len(self.features))),
+        self.model = Sequential([
+            Input(shape=(self.x_train.shape[1],self.x_train.shape[2])),
+            LSTM(units=100, return_sequences=True),
             Dropout(0.2),
-            Dense(3, activation='softmax')
+            LSTM(units=50, return_sequences=False),
+            Dropout(0.2),
+            Dense(units=3, activation='softmax')
         ])
+        self.model.compile(optimizer=Adam(learning_rate=0.0001), loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 
-        model.compile(
-            optimizer=Adam(learning_rate=0.001),
-            loss='sparse_categorical_crossentropy',
-            metrics=['accuracy']
-        )
-        
-        self.model = model
-        return model
 
     def _train(self, epochs=50, batch_size=16):
         reduce_lr = ReduceLROnPlateau(
             monitor='val_loss',
             factor=0.2,
-            patience=5,
+            patience=2,
             min_lr=0.0001
         )
 

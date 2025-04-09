@@ -13,7 +13,7 @@ class StockDataUtils:
         user_stock = self.stock_symbol.upper()
         self.stock_symbol, self.stock_name = get_stock_symbol_from_name(user_stock, self.stock_dict)
         if not self.stock_name:
-            raise Exception(f"Stock symbol or name '{self.user_stock}' not found in S&P 500.")
+            raise AttributeError(f"Stock symbol or name '{self.user_stock}' not found in S&P 500.")
         return self.stock_symbol, self.stock_name
     
     def fetch_stock_data(self):

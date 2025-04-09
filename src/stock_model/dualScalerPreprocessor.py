@@ -3,9 +3,9 @@ from sklearn.preprocessing import MinMaxScaler, RobustScaler
 
 class DualScalerPreprocessor():
     def __init__(self):
-        self.minmax_features = ['Close', 'High', 'Low', 'Open', 'Previous_Close', 'Close_Shifted']
-        self.robust_features = ['Volume', 'RSI', 'EMA_20', 'SMA_20', 'MACD', 
-                              'MACD_signal', 'MACD_histogram', 'Compound Sentiment']
+        self.minmax_features = ['Close', 'High', 'Low', 'Open', 'Previous_Close', 'EMA_20', 'SMA_20', 'MACD', 
+                              'MACD_signal', 'MACD_histogram']
+        self.robust_features = ['Volume', 'RSI', 'Compound Sentiment']
         self.minmax_scaler = MinMaxScaler(feature_range=(0,1))
         self.robust_scaler = RobustScaler()
 
