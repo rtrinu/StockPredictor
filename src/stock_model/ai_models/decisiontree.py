@@ -12,12 +12,12 @@ class DecisionTreeModel():
     @classmethod
     def create(cls,df):
         self = cls(df)
-        self.procsess_data()
+        self.process_data()
         self.build()
         self.predict()
         self.evaluate()
 
-    def procsess_data(self):
+    def process_data(self):
         x = self.df[self.features]
         y = self.df[self.target]
         self.x_train,self.x_test,self.y_train,self.y_test = train_test_split(x,y,test_size=0.2, random_state=42)
