@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import random as rnd
 from datetime import datetime as dt, timedelta
 import pandas as pd
+import os
 
 def plot_close_data():
     companies = ["AAPL", "NVDA", "MSFT", "AMZN", "META", "GOOGL", "AVGO"]
@@ -66,9 +67,9 @@ def plot_close_data():
     plt.xticks(rotation=45)
     
     plt.tight_layout()
-
-    image_path = r"src\App\static"
-    plt.savefig(image_path)
+    filename = f'stock_plot_{dt.now().strftime("%Y%m%d_%H%M%S")}.png'
+    filepath = os.path.join('src', 'app','backend', 'static', filename)
+    plt.savefig(filepath)
     plt.close()  
 
-    return image_path
+    return filename

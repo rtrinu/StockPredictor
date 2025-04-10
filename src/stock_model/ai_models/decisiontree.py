@@ -31,5 +31,4 @@ class DecisionTreeModel():
 
     def evaluate(self):
         dict = {"Actual":self.y_test,"Predicted":self.y_pred}
-        print(dict)
         print("Accuracy:", metrics.accuracy_score(self.y_test, self.y_pred))

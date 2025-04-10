@@ -1,6 +1,4 @@
 import os
-import csv
-import pytz
 import requests
 import pandas as pd
 from bs4 import BeautifulSoup
@@ -12,7 +10,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-NEWSAPI_KEY = os.getenv('NEWS_KEY')
+NEWSAPI_KEY = os.getenv('NEWS_API_KEY')
 
 class StockNews:
     def __init__(self, symbol: str) -> None:

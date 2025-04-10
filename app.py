@@ -1,21 +1,24 @@
-from flask import Flask, render_template, send_file, request, make_response, session
-from src.App.Backend.stock_plot_png import plot_close_data
+from flask import Flask, render_template
 import os
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
+
+template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'app', 'backend', 'templates'))
 
 
-app = Flask(__name__)
-app.secret_key = os.urandom(24)
 
-if not os.path.exists('static'):
-    os.makedirs('static')
+app = Flask(__name__, template_folder=template_dir)
+
+
 
 @app.route('/')
 def index():
-    plot_image_path = plot_close_data()
-    return render_template('index.html', image_path = plot_image_path)
+    return render_template('index.html', 
+                           title='My Flask App', 
+                           message='Welcome to Flask!')
 
-
-
-if __name__ == "__main__":
+if __name__ == '__main__':
+    print("Template Directory:", template_dir)
+    
+    # Verify directory exists
+    if not os.path.exists(template_dir):
+        print(f"Error: Template directory does not exist at {template_dir}")
     app.run()
