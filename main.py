@@ -1,7 +1,8 @@
 from src.stock_model.stock import Stock
 import os
-from flask import Flask, render_template, send_file
+from flask import Flask, render_template, send_file, request, session
 from backend.stock_plot_png import plot_close_data
+from src.stock_model.stock import Stock
 import matplotlib
 matplotlib.use('Agg')
 
@@ -27,6 +28,17 @@ def generate_stock_plot():
 @app.route('/stock-input')
 def stock_input():
     return render_template('stockInput.html')
+
+@app.route('/stock',methods=['GET'])
+def get_stock_data():
+    stock_symbol = request.args.get('stock','').strip().upper()
+    if not stock_symbol:
+        return "Input a valid symbol", 400
+    user_stock = Stock.create(stock_symbol)
+    user_stock_symbol = user_stock.return_stock_symbol()
+    stock_data = user_stock.display_information()
+    session['stock_symbol'] = stock_symbol
+    return render_template('stockDisplay.html',stock_data=stock_data, stock=stock_symbol)
 def main():
     #hybrid = CnnLSTMHybrid.create()
     #randomForest = RandomForestModel.create()

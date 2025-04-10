@@ -22,12 +22,13 @@ class Stock:
         self.add_technical_indicators()
         self.add_technical_signals()
         self.get_news_articles()
-        self.create_ai_training_df()
-        self.train_ai_models()
+        #self.create_ai_training_df()
+        #self.train_ai_models()
         #self.print_df()
-
+    
     def gather_data(self):
         self.stock_data_utils.fetch_stock_data()
+        self.stock_symbol = self.stock_data_utils.stock_symbol
         self.stock_name = self.stock_data_utils.stock_name
         self.df = self.stock_data_utils.df
         if self.df is None:
@@ -68,3 +69,6 @@ class Stock:
 
     def display_information(self):
         return display_info(self.df)
+    
+    def return_stock_symbol(self):
+        return self.stock_symbol
