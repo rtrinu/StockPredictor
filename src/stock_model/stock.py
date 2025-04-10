@@ -5,7 +5,7 @@ from src.stock_model.ai_models.lstmcnnHybrid import CnnLSTMHybrid
 from src.stock_model.ai_models.randomforest import randomForest
 from src.stock_model.ai_models.lstmSignalModel import LstmSignalModel
 from src.stock_model.ai_models.decisiontree import DecisionTreeModel
-
+from src.displayStockInformation import display_info
 import pandas as pd
 class Stock:
     def __init__(self, stock_symbol:str):
@@ -65,3 +65,6 @@ class Stock:
     def print_df(self):
         print(self.df)
         print(self.news_df)
+
+    def display_information(self):
+        return display_info(self.df)

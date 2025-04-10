@@ -24,7 +24,9 @@ def generate_stock_plot():
     except Exception as e:
         print(f"Error generating stock chart: {e}")
         return send_file('path/to/error/image.png', mimetype='image/png'), 500
-
+@app.route('/stock-input')
+def stock_input():
+    return render_template('stockInput.html')
 def main():
     #hybrid = CnnLSTMHybrid.create()
     #randomForest = RandomForestModel.create()
