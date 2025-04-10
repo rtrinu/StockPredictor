@@ -51,7 +51,7 @@ def plot_close_data():
     if pd.isna(first_date) or pd.isna(last_date):
         raise ValueError("Invalid date range: Dates are NaN or Inf.")
 
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(20, 12),dpi=300)
     plt.xlim(first_date, last_date)
 
     plt.plot(dates, fc_prices, label=f'{first_company}', color='blue')
@@ -67,9 +67,9 @@ def plot_close_data():
     plt.xticks(rotation=45)
     
     plt.tight_layout()
-    filename = f'stock_plot_{dt.now().strftime("%Y%m%d_%H%M%S")}.png'
-    filepath = os.path.join('src', 'app','backend', 'static', filename)
+    filename = 'static.png'
+    filepath = os.path.join('app', filename)
     plt.savefig(filepath)
     plt.close()  
 
-    return filename
+    return filename, filepath

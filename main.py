@@ -1,7 +1,9 @@
 from src.stock_model.stock import Stock
 import os
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, send_file
 from backend.stock_plot_png import plot_close_data
+import matplotlib
+matplotlib.use('Agg')
 
 app = Flask(__name__)
 
@@ -16,11 +18,12 @@ def index():
 
 @app.route('/generate-stock-plot')
 def generate_stock_plot():
-    try: 
-        plot_data = plot_close_data()
-        return jsonify(plot_data)
+    try:
+        filename, filepath = plot_close_data()
+        return send_file(filepath, mimetype='image/png')
     except Exception as e:
-        return jsonify({'error' : str(e)})
+        print(f"Error generating stock chart: {e}")
+        return send_file('path/to/error/image.png', mimetype='image/png'), 500
 
 def main():
     #hybrid = CnnLSTMHybrid.create()
