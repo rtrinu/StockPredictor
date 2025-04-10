@@ -1,29 +1,28 @@
-
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-
 body {
     font-family: Arial, sans-serif;
     line-height: 1.6;
-    background-color: #f4f4f4;
+    background-color: #f0f0f0;
     color: #333;
-    padding-top: 50px; 
+    padding-top: 70px;
 }
-
 
 header {
     position: fixed;
     width: 100%;
+    height: 100%;
     top: 0;
     left: 0;
     background-color: #333;
     color: white;
     padding: 15px 0;
-    z-index: 10;
+    z-index: 1000;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 header nav {
@@ -33,11 +32,6 @@ header nav {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
-}
-
-header .logo {
-    font-size: 24px;
-    font-weight: bold;
 }
 
 header ul {
@@ -57,15 +51,14 @@ header ul li a {
 }
 
 header ul li a:hover {
-    color: #00bcd4;
+    color: #bbbbbb;
 }
 
-
 #home {
-    text-align: center;
-    background-color: #00bcd4;
+    background-color: #7d7d7d;
     color: white;
     padding: 100px 20px;
+    text-align: center;
 }
 
 #home h1 {
@@ -78,8 +71,36 @@ header ul li a:hover {
     margin-bottom: 30px;
 }
 
+.btn-get-started {
+    background-color: #616161;
+    color: white;
+    padding: 15px 30px;
+    font-size: 18px;
+    text-transform: uppercase;
+    border-radius: 5px;
+    border: none;
+    transition: background-color 0.3s, transform 0.3s;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.btn-get-started:hover {
+    background-color: #505050;
+    transform: scale(1.05);
+}
+
+.btn-get-started:active {
+    background-color: #404040;
+    transform: scale(0.98);
+}
+
+.btn-get-started:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(97, 97, 97, 0.5);
+}
+
 .cta-button {
-    background-color: #333;
+    background-color: #444;
     color: white;
     padding: 15px 30px;
     font-size: 18px;
@@ -89,154 +110,43 @@ header ul li a:hover {
 }
 
 .cta-button:hover {
-    background-color: #00bcd4;
+    background-color: #616161;
 }
 
-
-#features {
-    display: flex;               
-    flex-wrap: wrap;             
-    justify-content: space-between; 
-    gap: 20px;                   
-    padding: 50px 20px;
-    background-color: white;
-    text-align: center;
-}
-
-.feature-card {
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    flex: 1 1 calc(25% - 20px);  
-    box-sizing: border-box;      
-    min-width: 280px;            
-}
-
-.feature-card h3 {
+.card-title {
     font-size: 22px;
-    margin-bottom: 10px;
 }
 
-.feature-card p {
+.card-text {
     font-size: 16px;
-    color: #555;
-}
-
-@media (max-width: 1024px) {
-    .feature-card {
-        flex: 1 1 calc(45% - 20px); 
-    }
-}
-
-@media (max-width: 768px) {
-    .feature-card {
-        flex: 1 1 100%;  
-    }
-}
-
-
-
-#how-it-works {
-    background-color: #f4f4f4;
-    padding: 50px 20px;
-    text-align: center;
+    color: #777;
 }
 
 #how-it-works h2 {
     font-size: 30px;
-    margin-bottom: 40px;
 }
 
 .step {
-    margin: 20px 0;
     font-size: 18px;
     color: #333;
 }
 
-
-#live-dashboard {
-    padding: 50px 20px;
-    text-align: center;
-}
-
 #live-dashboard h2 {
     font-size: 30px;
-    margin-bottom: 20px;
 }
 
-.chart {
-    width: 100%;
-    height: 100%;
-    background-color: #ccc;
-    margin-top: 20px;
-    border-radius: 8px;
-}
-.chart img{
-    max-width:100%;
-    height:auto;
+#stock-prediction-chart {
+    max-width: 100%;
+    height: auto;
     object-fit: contain;
-}
-
-
-#testimonials {
-    background-color: #00bcd4;
-    color: white;
-    padding: 50px 20px;
-    text-align: center;
-}
-
-.testimonial {
-    margin-bottom: 20px;
-    font-size: 18px;
-    font-style: italic;
-}
-
-.testimonial p {
-    margin-bottom: 10px;
-}
-
-
-#pricing {
-    display: flex;
-    justify-content: space-around;
-    padding: 50px 20px;
-    background-color: white;
-}
-
-.pricing-card {
-    background-color: #f9f9f9;
-    padding: 30px;
     border-radius: 8px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    width: 250px;
-    text-align: center;
 }
-
-.pricing-card h3 {
-    font-size: 24px;
-    margin-bottom: 20px;
-}
-
-.pricing-card p {
-    font-size: 16px;
-    margin-bottom: 20px;
-}
-
-#pricing .cta-button {
-    margin-top: 10px;
-}
-
 
 footer {
     background-color: #333;
     color: white;
     padding: 20px 0;
     text-align: center;
-}
-
-footer p {
-    margin-bottom: 10px;
 }
 
 footer ul {
@@ -258,11 +168,5 @@ footer ul li a {
 }
 
 footer ul li a:hover {
-    color: #00bcd4;
-}
-#stock-prediction-chart {
-    max-width: 100%;
-    height: auto;
-    display: block;
-    margin: 0 auto;
+    color: #bbbbbb;
 }
