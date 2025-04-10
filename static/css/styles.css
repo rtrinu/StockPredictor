@@ -1,0 +1,59 @@
+body {
+    background-color: #f4f6f9;
+    font-family: 'Arial', sans-serif;
+}
+
+.container {
+    max-width: 800px;
+    margin-top: 50px;
+}
+
+header {
+    color: #2c3e50;
+    margin-bottom: 30px;
+}
+
+.card {
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    border: none;
+}
+
+.btn-primary {
+    background-color: #3498db;
+    border-color: #3498db;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+}
+
+#predictionResults {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.prediction-positive {
+    color: green;
+}
+
+.prediction-negative {
+    color: red;
+}
+
+#stockPlotSection img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+#stockPlotCompanies {
+    font-weight: bold;
+    color: #2c3e50;
+}

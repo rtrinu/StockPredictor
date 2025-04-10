@@ -19,15 +19,15 @@ def plot_close_data():
     second_random_int = rnd.randint(0, 5)
     second_company = companies[second_random_int]
 
-    print(f"Downloading data for {first_company} from {start_date} to {end_date}")
+    #print(f"Downloading data for {first_company} from {start_date} to {end_date}")
     first_company_data = yf.download(first_company, start=start_date, end=end_date)
-    print(f"Downloading data for {second_company} from {start_date} to {end_date}")
+    #print(f"Downloading data for {second_company} from {start_date} to {end_date}")
     second_company_data = yf.download(second_company, start=start_date, end=end_date)
 
-    print(f"First Company Data for {first_company}:")
-    print(first_company_data.head())
-    print(f"Second Company Data for {second_company}:")
-    print(second_company_data.head())
+    #print(f"First Company Data for {first_company}:")
+    #print(first_company_data.head())
+    #print(f"Second Company Data for {second_company}:")
+    #print(second_company_data.head())
 
     if first_company_data.empty or second_company_data.empty:
         raise ValueError(f"Data for {first_company} or {second_company} is empty.")
@@ -40,7 +40,7 @@ def plot_close_data():
 
     dates = pd.to_datetime(first_company_data['Date'], errors="coerce")
 
-    print(f"Converted dates (first few): {dates.head()}")
+    #print(f"Converted dates (first few): {dates.head()}")
 
     if dates.isnull().all():
         raise ValueError("No valid dates available in the data after coercion.")
