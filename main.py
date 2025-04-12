@@ -29,7 +29,7 @@ def generate_stock_plot():
 def stock_input():
     return render_template('stockInput.html')
 
-@app.route('/stock',methods=['GET'])
+@app.route('/get_stock_data',methods=['GET'])
 def get_stock_data():
     stock_symbol = request.args.get('stock','').strip().upper()
     if not stock_symbol:
@@ -44,6 +44,8 @@ def main():
     #randomForest = RandomForestModel.create()
     user_input = input("Input a Stock: ")
     user_stock = Stock.create(user_input)
+    user_stock.create_and_train()
 
 if __name__ == "__main__":
-    app.run()
+    #app.run(debug=True)
+    main()

@@ -1,7 +1,10 @@
 import os
 import math
 import numpy as np
+import pandas as pd
 import pickle
+import matplotlib
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.models import Sequential #type: ignore
@@ -10,7 +13,6 @@ from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau #type: i
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 plt.style.use('fivethirtyeight')
-
 
 class CnnLSTMHybrid():
     def __init__(self, df, stock_name):
@@ -28,15 +30,17 @@ class CnnLSTMHybrid():
         self.y_test = []
         self.hybrid_model = None
         self.predictions = None
+        self.lookback = 30
+        self.forecast_horizon = 10
 
     @classmethod
     def create(cls, df, stock_name):
         self = cls(df, stock_name)
         self.load_model()
         self.load_and_preprocess_data()
-        if self.hybrid_model is None:
+        """ if self.hybrid_model is None:
             print(f"No existing model for {self.stock_name}")
-            self.run()
+            self.run()"""
         self.compare_models()
         return self
 
@@ -47,6 +51,7 @@ class CnnLSTMHybrid():
         self.scaler = MinMaxScaler(feature_range=(0, 1))
         self.scaler.fit(self.dataset[:self.training_data_len])
         self.scaled_data = self.scaler.transform(self.dataset)
+        print(f"Sample of dates: {self.df.index[:5]}")
 
     def _preprocess_training_data(self):
         train_data = self.scaled_data[:self.training_data_len]
@@ -99,9 +104,7 @@ class CnnLSTMHybrid():
             epochs=50,
             validation_data=(self.x_test, self.scaler.transform(self.y_test)),
             callbacks=[early_stop, reduce_lr],
-            
         )
-        
 
     def baseline_mae(self):
         mean_price = np.mean(self.dataset[:self.training_data_len])
@@ -188,3 +191,86 @@ class CnnLSTMHybrid():
             self.output_predictions()
             
         self.plot_prediction()
+
+    def predict_future(self):
+        last_sequence = self.df['Close'].tail(self.lookback).values
+        last_sequence = last_sequence.reshape(-1, 1)
+        
+        last_sequence = self.scaler.transform(last_sequence)
+        
+        current_sequence = last_sequence.reshape(1, self.lookback, 1)
+        
+        future_predictions = []
+        
+        for _ in range(self.forecast_horizon):
+            next_pred = self.hybrid_model.predict(current_sequence, verbose=0)
+            future_predictions.append(next_pred[0, 0])
+            
+            current_sequence = current_sequence.reshape(self.lookback, 1)
+            current_sequence = np.roll(current_sequence, -1)
+            current_sequence[-1] = next_pred
+            current_sequence = current_sequence.reshape(1, self.lookback, 1)
+        
+        future_predictions = np.array(future_predictions).reshape(-1, 1)
+        padded_predictions = np.zeros((len(future_predictions), self.scaled_data.shape[1]))
+        padded_predictions[:, 0] = future_predictions[:, 0]
+        future_predictions = self.scaler.inverse_transform(padded_predictions)[:, 0]
+        
+        if isinstance(self.df.index, pd.DatetimeIndex):
+            last_date = self.df.index[-1]
+        else:
+            last_date = pd.Timestamp.today()
+        future_dates = pd.date_range(
+            start=last_date + pd.Timedelta(days=1), 
+            periods=self.forecast_horizon,
+            freq='B'
+        )
+
+        forecast_df = pd.DataFrame({
+            'Predicted_Price': future_predictions
+        }, index=future_dates)
+        
+        return forecast_df
+
+    def plot_predictions_with_forecast(self):
+        
+        future_pred_df = self.predict_future()
+        
+        # Ensure dates are in datetime format
+        if not isinstance(self.df.index, pd.DatetimeIndex):
+            self.df.index = pd.to_datetime(self.df.index)
+        
+        train = self.data[:self.training_data_len]
+        valid = self.data[self.training_data_len:].copy()
+        valid["Predictions"] = self.predictions
+        
+        # Create DataFrame for future predictions
+        future = pd.DataFrame(index=future_pred_df.index)
+        future["Future_Predictions"] = future_pred_df["Predicted_Price"]
+        
+        plt.figure(figsize=(16, 8))
+        plt.title(f'{self.stock_name} Stock Price Prediction', fontsize=16, pad=20)
+        
+        # Plot with better formatting
+        plt.plot(train['Close'], linewidth=2)
+        plt.plot(valid[['Close', 'Predictions']], linewidth=2)
+        plt.plot(future['Future_Predictions'], linestyle='--', linewidth=2)
+        
+        # Add grid and format axes
+        plt.grid(True, linestyle='--', alpha=0.7)
+        plt.xlabel('Date', fontsize=12)
+        plt.ylabel('Price ($)', fontsize=12)
+        
+        # Format x-axis dates
+        plt.gcf().autofmt_xdate()  # Rotate and align the tick labels
+        
+        plt.legend(['Train', 'Val', 'Test Predictions', 'Future Predictions'], 
+                loc='lower right', fontsize=10)
+        
+        plt.tight_layout()
+        filename = f'{self.stock_name}.png'
+        filepath = os.path.join('app', filename)
+        plt.savefig(filepath, dpi=300, bbox_inches='tight')
+        plt.close()
+        
+        return future_pred_df

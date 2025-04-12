@@ -18,15 +18,17 @@ class Stock:
     @classmethod
     def create(cls,stock_symbol):
         self = cls(stock_symbol)
-        self.gather_data()
-        self.add_technical_indicators()
-        self.add_technical_signals()
-        self.get_news_articles()
+        self._gather_data()
+        self._add_technical_indicators()
+        self._add_technical_signals()
+        self._get_news_articles()
+        return self
         #self.create_ai_training_df()
         #self.train_ai_models()
         #self.print_df()
     
-    def gather_data(self):
+    
+    def _gather_data(self):
         self.stock_data_utils.fetch_stock_data()
         self.stock_symbol = self.stock_data_utils.stock_symbol
         self.stock_name = self.stock_data_utils.stock_name
@@ -35,34 +37,40 @@ class Stock:
             print("Failed to gather data")
         self.df = pd.DataFrame(self.df)
 
-    def add_technical_indicators(self):
+    def _add_technical_indicators(self):
         if self.df is None:
             print("Dataframe is empty/not loaded to add technical indicators.")
             return
         else:
             self.df = TechnicalIndicatorUtil.add_technical_indicators(self.df)
     
-    def add_technical_signals(self):
+    def _add_technical_signals(self):
         if self.df is None:
             print("Dataframe is empty/not loaded to add technical signals.")
             return
         else:
             self.df = TechnicalIndicatorUtil.generate_technical_signals(self.df)
 
-    def get_news_articles(self):
+    def _get_news_articles(self):
         self.news_df = StockNews(self.stock_name).df
 
-    def create_ai_training_df(self):
+    def _create_ai_training_df(self):
         self.news_df = self.news_df.sort_values('Date').reset_index(drop=True)
         self.df['Compound Sentiment'] = self.news_df['Compound Sentiment']
         self.df.drop(['index'], axis=1)
 
-    def train_ai_models(self):
+    def _train_ai_models(self):
         print("Training AI...")
-        #hybrid = CnnLSTMHybrid.create(self.df, self.stock_name)
+        hybrid = CnnLSTMHybrid.create(self.df, self.stock_name)
+        future_predictions = hybrid.predict_future()
+        print("\nPredictions for the next 10 days:")
+        print(future_predictions)
+        
+        hybrid.plot_predictions_with_forecast()
+
         #random_forest = randomForest.create(self.df, self.stock_name)
         #signal = LstmSignalModel.create(self.df, self.stock_name)
-        decision = DecisionTreeModel.create(self.df)
+        #decision = DecisionTreeModel.create(self.df)
     def print_df(self):
         print(self.df)
         print(self.news_df)
@@ -72,3 +80,7 @@ class Stock:
     
     def return_stock_symbol(self):
         return self.stock_symbol
+    
+    def create_and_train(self):
+        self._create_ai_training_df()
+        self._train_ai_models()
