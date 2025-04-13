@@ -1,10 +1,10 @@
-from src.stock_model.dictionary import fetch_sp500_data, get_stock_symbol_from_name
+from src.stock_model.dictionary import fetch_stock_data, get_stock_symbol_from_name
 import datetime
 from datetime import datetime, timedelta
 import yfinance as yf
 class StockDataUtils:
     def __init__(self, stock_symbol:str):
-        self.stock_dict = fetch_sp500_data()
+        self.stock_dict = fetch_stock_data()
         self.stock_symbol = stock_symbol
         self.stock_name = None
         self.df = None
