@@ -61,14 +61,15 @@ class Stock:
 
     def _train_ai_models(self):
         print("Training AI...")
-        hybrid = CnnLSTMHybrid.create(self.df, self.stock_name)
-        future_predictions = hybrid.predict_future()
+        """hybrid = CnnLSTMHybrid.create(self.df, self.stock_name)
+        hybrid_future_predictions = hybrid.predict_future()
         print("\nPredictions for the next 10 days:")
-        print(future_predictions)
-        
-        hybrid.plot_prediction()
-
-        #random_forest = randomForest.create(self.df, self.stock_name)
+        print(hybrid_future_predictions)
+        hybrid.plot_prediction()"""
+        random_forest = randomForest.create(self.df, self.stock_name)
+        random_forest_predictions = random_forest.predict_future()
+        print(random_forest_predictions)
+        random_forest.plot_predictions()
         #signal = LstmSignalModel.create(self.df, self.stock_name)
         #decision = DecisionTreeModel.create(self.df)
     def print_df(self):
