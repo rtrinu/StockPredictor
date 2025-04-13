@@ -1,6 +1,7 @@
 import os
 import math
 import numpy as np
+import tensorflow as tf
 import pandas as pd
 import pickle
 import matplotlib
@@ -38,10 +39,12 @@ class CnnLSTMHybrid():
         self = cls(df, stock_name)
         self.load_model()
         self.load_and_preprocess_data()
-        """ if self.hybrid_model is None:
+        if self.hybrid_model is None:
             print(f"No existing model for {self.stock_name}")
-            self.run()"""
-        self.compare_models()
+            self.run()
+            self.save_model()
+        self.predict_future_stocks()
+        #self.compare_models()
         return self
 
     def _load_data(self):
@@ -95,7 +98,7 @@ class CnnLSTMHybrid():
         self.hybrid_model.compile(optimizer='adam', loss='mean_squared_error')
 
     def _train(self):
-        early_stop = EarlyStopping(monitor='val_loss', patience=15, restore_best_weights=True)
+        early_stop = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
         reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.3, patience=2, min_lr=1e-6)
         history = self.hybrid_model.fit(
             self.x_train,
@@ -155,17 +158,6 @@ class CnnLSTMHybrid():
         else:
             self.hybrid_model = None
 
-    def plot_prediction(self):
-        train = self.data[:self.training_data_len]
-        valid = self.data[self.training_data_len:].copy()
-        valid["Predictions"] = self.predictions
-        plt.figure(figsize=(16, 8))
-        plt.title('Model')
-        plt.plot(train['Close'])
-        plt.plot(valid[['Close', 'Predictions']])
-        plt.legend(['Train', 'Val', 'Predictions'], loc='lower right')
-        plt.show()
-
     def load_and_preprocess_data(self):
         self._load_data()
         self._preprocess_training_data()
@@ -190,7 +182,10 @@ class CnnLSTMHybrid():
             self.load_model()
             self.output_predictions()
             
-        self.plot_prediction()
+
+    @tf.function(reduce_retracing=True)
+    def predict_step(self, current_sequence):
+        return self.hybrid_model.predict(current_sequence, verbose=0)
 
     def predict_future(self):
         last_sequence = self.df['Close'].tail(self.lookback).values
@@ -203,7 +198,7 @@ class CnnLSTMHybrid():
         future_predictions = []
         
         for _ in range(self.forecast_horizon):
-            next_pred = self.hybrid_model.predict(current_sequence, verbose=0)
+            next_pred = self.hybrid_model.predict_step(current_sequence)
             future_predictions.append(next_pred[0, 0])
             
             current_sequence = current_sequence.reshape(self.lookback, 1)
@@ -231,46 +226,40 @@ class CnnLSTMHybrid():
         }, index=future_dates)
         
         return forecast_df
-
-    def plot_predictions_with_forecast(self):
-        
+    
+    def plot_prediction(self):
         future_pred_df = self.predict_future()
-        
-        # Ensure dates are in datetime format
-        if not isinstance(self.df.index, pd.DatetimeIndex):
-            self.df.index = pd.to_datetime(self.df.index)
-        
-        train = self.data[:self.training_data_len]
-        valid = self.data[self.training_data_len:].copy()
-        valid["Predictions"] = self.predictions
-        
-        # Create DataFrame for future predictions
         future = pd.DataFrame(index=future_pred_df.index)
         future["Future_Predictions"] = future_pred_df["Predicted_Price"]
         
+        # Create a date index for the training and validation sets
+        train_dates = self.df['Date'][:self.training_data_len].values
+        valid_dates = self.df['Date'][self.training_data_len:].values
+        
+        # Create DataFrames for train and valid using the dates
+        train = pd.DataFrame(data=self.data[:self.training_data_len].values, index=train_dates, columns=['Close'])
+        valid = pd.DataFrame(data=self.data[self.training_data_len:].values, index=valid_dates, columns=['Close'])
+        
+        # Add predictions to the valid DataFrame
+        valid["Predictions"] = self.predictions
+
         plt.figure(figsize=(16, 8))
-        plt.title(f'{self.stock_name} Stock Price Prediction', fontsize=16, pad=20)
+        plt.title('Model')
         
-        # Plot with better formatting
-        plt.plot(train['Close'], linewidth=2)
-        plt.plot(valid[['Close', 'Predictions']], linewidth=2)
-        plt.plot(future['Future_Predictions'], linestyle='--', linewidth=2)
+        # Plotting the data with dates on the x-axis
+        plt.plot(train.index, train['Close'], label='Train')
+        plt.plot(valid.index, valid[['Close', 'Predictions']], label='Val')
+        plt.plot(future.index, future['Future_Predictions'], linestyle='--', linewidth=2, label='Future Predictions')
         
-        # Add grid and format axes
-        plt.grid(True, linestyle='--', alpha=0.7)
-        plt.xlabel('Date', fontsize=12)
-        plt.ylabel('Price ($)', fontsize=12)
-        
-        # Format x-axis dates
-        plt.gcf().autofmt_xdate()  # Rotate and align the tick labels
-        
-        plt.legend(['Train', 'Val', 'Test Predictions', 'Future Predictions'], 
-                loc='lower right', fontsize=10)
-        
+        plt.legend(loc='lower right')
         plt.tight_layout()
-        filename = f'{self.stock_name}.png'
+        
+        filename = f'{self.stock_name}_hybrid.png'
         filepath = os.path.join('app', filename)
         plt.savefig(filepath, dpi=300, bbox_inches='tight')
         plt.close()
-        
-        return future_pred_df
+
+    def predict_future_stocks(self):
+        self.output_predictions()
+        self.predict_future()
+        self.plot_prediction()

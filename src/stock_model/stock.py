@@ -66,7 +66,7 @@ class Stock:
         print("\nPredictions for the next 10 days:")
         print(future_predictions)
         
-        hybrid.plot_predictions_with_forecast()
+        hybrid.plot_prediction()
 
         #random_forest = randomForest.create(self.df, self.stock_name)
         #signal = LstmSignalModel.create(self.df, self.stock_name)
