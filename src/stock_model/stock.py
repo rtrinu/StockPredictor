@@ -7,7 +7,7 @@ from src.stock_model.ai_models.lstmSignalModel import LstmSignalModel
 from src.stock_model.ai_models.decisiontree import DecisionTreeModel
 from src.displayStockInformation import display_info
 import pandas as pd
-from src.stock_model.stockPrediction import simple_averages
+from src.stock_model.stockPrediction import simple_averages, weighted_averages
 class Stock:
     def __init__(self, stock_symbol:str):
         self.stock_symbol = stock_symbol
@@ -72,10 +72,13 @@ class Stock:
         #print("\nPredictions for the next 10 days:")
         #print(random_forest_predictions)
         #random_forest.plot_predictions()
-        results = simple_averages(rf_predictions,hybrid_predictions)
-        print("\nPredictions for the next 10 days:")
-        print(results)
-        
+        simple= simple_averages(rf_predictions,hybrid_predictions)
+        weighted = weighted_averages(rf_predictions,hybrid_predictions)
+        print("\n Simeple Averages for the next 10 days:")
+        print(simple)
+
+        print("\n Weighted Averages for the next 10 days:")
+        print(weighted)        
 
         #decision = DecisionTreeModel.create(self.df)
     def print_df(self):
@@ -91,3 +94,4 @@ class Stock:
     def create_and_train(self):
         self._create_ai_training_df()
         self._train_ai_models()
+        
