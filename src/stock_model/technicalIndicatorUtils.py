@@ -24,7 +24,7 @@ class TechnicalIndicatorUtil:
         df['SMA_20'] = ta.sma(df['Close_Shifted'], length=20)
         
         macd= ta.macd(df['Close_Shifted'], length=14)
-        print(macd)
+
         df['MACD'] = macd['MACD_12_26_9']
         df['MACD_signal'] = macd['MACDs_12_26_9']
         df['MACD_histogram'] = macd['MACDh_12_26_9']

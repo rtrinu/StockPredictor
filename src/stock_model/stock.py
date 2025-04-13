@@ -7,6 +7,7 @@ from src.stock_model.ai_models.lstmSignalModel import LstmSignalModel
 from src.stock_model.ai_models.decisiontree import DecisionTreeModel
 from src.displayStockInformation import display_info
 import pandas as pd
+from src.stock_model.stockPrediction import simple_averages
 class Stock:
     def __init__(self, stock_symbol:str):
         self.stock_symbol = stock_symbol
@@ -61,16 +62,21 @@ class Stock:
 
     def _train_ai_models(self):
         print("Training AI...")
-        """hybrid = CnnLSTMHybrid.create(self.df, self.stock_name)
-        hybrid_future_predictions = hybrid.predict_future()
-        print("\nPredictions for the next 10 days:")
-        print(hybrid_future_predictions)
-        hybrid.plot_prediction()"""
+        hybrid = CnnLSTMHybrid.create(self.df, self.stock_name)
+        hybrid_predictions = hybrid.predict_future()
+        #print("\nPredictions for the next 10 days:")
+        #print(hybrid_future_predictions)
+        #hybrid.plot_prediction()
         random_forest = randomForest.create(self.df, self.stock_name)
-        random_forest_predictions = random_forest.predict_future()
-        print(random_forest_predictions)
-        random_forest.plot_predictions()
-        #signal = LstmSignalModel.create(self.df, self.stock_name)
+        rf_predictions = random_forest.predict_future()
+        #print("\nPredictions for the next 10 days:")
+        #print(random_forest_predictions)
+        #random_forest.plot_predictions()
+        results = simple_averages(rf_predictions,hybrid_predictions)
+        print("\nPredictions for the next 10 days:")
+        print(results)
+        
+
         #decision = DecisionTreeModel.create(self.df)
     def print_df(self):
         print(self.df)

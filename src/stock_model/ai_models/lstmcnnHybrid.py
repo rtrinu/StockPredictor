@@ -220,10 +220,12 @@ class CnnLSTMHybrid():
             periods=self.forecast_horizon,
             freq='B'
         )
+        future_dates.floor('T')
 
         forecast_df = pd.DataFrame({
             'Predicted_Price': future_predictions
         }, index=future_dates)
+        forecast_df.index = forecast_df.index.date
         
         return forecast_df
     
