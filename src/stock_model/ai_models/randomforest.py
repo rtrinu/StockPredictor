@@ -152,32 +152,3 @@ class randomForest():
         forecast_df.index = forecast_df.index.date
         
         return forecast_df
-
-
-    def plot_predictions(self):
-        future_predictions_df = self.predict_future(self.forecast_horizon)
-        results = pd.DataFrame({
-            'Actual': self.y_test,
-            'Predicted': self.predictions
-        })
-
-        train_dates = self.df['Date'][:len(self.y_train)].values
-        valid_dates = self.df['Date'][len(self.y_train):len(self.y_train) + len(self.y_test)].values
-
-        plt.figure(figsize=(12, 6))
-        plt.plot(train_dates, self.y_train, label='Train', color='blue')
-        plt.plot(valid_dates, self.y_test, label='Actual', color='blue', alpha=0.5)
-        plt.plot(valid_dates, results['Predicted'], label='Predicted', alpha=0.7, color='orange')
-
-        future_dates = future_predictions_df.index
-        plt.plot(future_dates, future_predictions_df['Predicted_Price'], label='Future Predictions', linestyle='--', color='green')
-
-        plt.title(f'Stock Price Prediction for {self.stock_name}')
-        plt.xlabel('Time')
-        plt.ylabel('Price')
-        plt.legend()
-        plt.tight_layout()
-        filename = f'{self.stock_name}_randomforest.png'
-        filepath = os.path.join('app', filename)
-        plt.savefig(filepath, dpi=300, bbox_inches='tight')
-        plt.close()

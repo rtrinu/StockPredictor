@@ -3,8 +3,8 @@ from src.stock_model.technicalIndicatorUtils import TechnicalIndicatorUtil
 from src.stock_model.newsUtils import StockNews
 from src.stock_model.ai_models.lstmcnnHybrid import CnnLSTMHybrid
 from src.stock_model.ai_models.randomforest import randomForest
-from src.stock_model.ai_models.lstmSignalModel import LstmSignalModel
 from src.stock_model.ai_models.decisiontree import DecisionTreeModel
+from src.stock_model.ai_models.stacking import StackedModel
 from src.displayStockInformation import display_info
 import pandas as pd
 from src.stock_model.stockPrediction import simple_averages, weighted_averages
@@ -56,13 +56,17 @@ class Stock:
         self.news_df = StockNews(self.stock_name).df
 
     def _create_ai_training_df(self):
+        num_news_entries = len(self.news_df['Compound Sentiment'])
         self.news_df = self.news_df.sort_values('Date').reset_index(drop=True)
-        self.df['Compound Sentiment'] = self.news_df['Compound Sentiment']
+        if 'Compound Sentiment' not in self.df.columns:
+            self.df['Compound Sentiment'] = pd.NA
+        self.df['Compound Sentiment'].iloc[-num_news_entries:] = self.news_df['Compound Sentiment'].iloc[-num_news_entries:]
         self.df.drop(['index'], axis=1)
+        self.df.to_csv('ai_table.csv')
 
     def _train_ai_models(self):
         print("Training AI...")
-        hybrid = CnnLSTMHybrid.create(self.df, self.stock_name)
+        """hybrid = CnnLSTMHybrid.create(self.df, self.stock_name)
         hybrid_predictions = hybrid.predict_future()
         #print("\nPredictions for the next 10 days:")
         #print(hybrid_future_predictions)
@@ -75,9 +79,11 @@ class Stock:
         weighted = weighted_averages(rf_predictions,hybrid_predictions)
         print("\n Simple Averages for the next 10 days:")
         print(simple)
-
         print("\n Weighted Averages for the next 10 days:")
-        print(weighted)        
+        print(weighted)   """     
+        stacked = StackedModel.create(self.df)
+
+
 
         #decision = DecisionTreeModel.create(self.df)
     def print_df(self):
