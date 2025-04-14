@@ -10,3 +10,4 @@ __pycache__/
 venv/
 models/
 dfcolumns.txt
+ai_table.csv
