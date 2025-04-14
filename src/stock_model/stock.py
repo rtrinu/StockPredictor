@@ -70,8 +70,8 @@ class Stock:
         hybrid_predictions = hybrid.predict_future()
 
         hybrid.plot_prediction()
-        random_forest = randomForest.create(self.df, self.stock_name)
-        rf_predictions = random_forest.predict_future()
+        #random_forest = randomForest.create(self.df, self.stock_name)
+        #rf_predictions = random_forest.predict_future()
         #print("\nPredictions for the next 10 days:")
         #print(random_forest_predictions)
         #simple= simple_averages(rf_predictions,hybrid_predictions)
@@ -80,13 +80,11 @@ class Stock:
         #print(simple)
         #print("\n Weighted Averages for the next 10 days:")
         #print(weighted)       
-        stacked = StackedModel.create(self.df)
-
-
-
-        decision = DecisionTreeModel.create(self.df)
-        signal=decision.predict_future()
-        print(signal)
+        #stacked = StackedModel.create(self.df)
+        #decision = DecisionTreeModel.create(self.df)
+        #signal=decision.predict_future()
+        #print(signal)
+    
     def print_df(self):
         print(self.df)
         print(self.news_df)

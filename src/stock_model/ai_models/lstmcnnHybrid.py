@@ -233,22 +233,18 @@ class CnnLSTMHybrid():
         future_pred_df = self.predict_future()
         future = pd.DataFrame(index=future_pred_df.index)
         future["Future_Predictions"] = future_pred_df["Predicted_Price"]
-        
-        # Create a date index for the training and validation sets
+
         train_dates = self.df['Date'][:self.training_data_len].values
         valid_dates = self.df['Date'][self.training_data_len:].values
-        
-        # Create DataFrames for train and valid using the dates
+
         train = pd.DataFrame(data=self.data[:self.training_data_len].values, index=train_dates, columns=['Close'])
         valid = pd.DataFrame(data=self.data[self.training_data_len:].values, index=valid_dates, columns=['Close'])
-        
-        # Add predictions to the valid DataFrame
+
         valid["Predictions"] = self.predictions
 
         plt.figure(figsize=(16, 8))
         plt.title('Model')
         
-        # Plotting the data with dates on the x-axis
         plt.plot(train.index, train['Close'], label='Train')
         plt.plot(valid.index, valid[['Close', 'Predictions']], label='Val')
         plt.plot(future.index, future['Future_Predictions'], linestyle='--', linewidth=2, label='Future Predictions')
