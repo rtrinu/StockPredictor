@@ -1,8 +1,10 @@
 import pandas as pd
 import numpy as np
+import warnings
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
 from sklearn import metrics
+warnings.filterwarnings(action='ignore', category=UserWarning, module='sklearn')
 
 class DecisionTreeModel():
     def __init__(self,df):
@@ -38,28 +40,21 @@ class DecisionTreeModel():
         print("Accuracy:", metrics.accuracy_score(self.y_test, self.y_pred))
 
     def predict_future(self):
-            # Get the last sequence of features
-            last_sequence = self.df[self.features].tail(self.lookback).values
-            
-            # Prepare the current sequence for prediction
+            last_sequence = self.df[self.features].tail(self.lookback).values     
             current_sequence = last_sequence.reshape(1, self.lookback, len(self.features))
-            print(current_sequence)
             future_predictions = []
 
             for _ in range(self.forecast_horizon):
-                # Predict the next signal
-                next_pred = self.model.predict(current_sequence.reshape(1, -1))  # Flatten for prediction
+                next_pred = self.model.predict(current_sequence.reshape(1, -1))
                 future_predictions.append(next_pred[0])
                 
-                # Update the current sequence for the next prediction
                 current_sequence = current_sequence.reshape(self.lookback, len(self.features))
-                current_sequence = np.roll(current_sequence, -1, axis=0)  # Shift the sequence
-                current_sequence[-1] = next_pred  # Set the last value to the predicted signal
-                current_sequence = current_sequence.reshape(1, self.lookback, len(self.features))  # Reshape for next input
+                current_sequence = np.roll(current_sequence, -1, axis=0)  
+                current_sequence[-1] = next_pred  
+                current_sequence = current_sequence.reshape(1, self.lookback, len(self.features))  
 
             future_predictions = np.array(future_predictions).reshape(-1, 1)
             
-            # Create a DataFrame for future predictions
             if isinstance(self.df.index, pd.DatetimeIndex):
                 last_date = self.df.index[-1]
             else:
@@ -67,7 +62,7 @@ class DecisionTreeModel():
             future_dates = pd.date_range(
                 start=last_date + pd.Timedelta(days=1), 
                 periods=self.forecast_horizon,
-                freq='B'  # Business days
+                freq='B' 
             )
             future_dates.floor('T')
             

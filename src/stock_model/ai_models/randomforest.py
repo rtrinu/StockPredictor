@@ -8,7 +8,7 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from sklearn.model_selection import train_test_split, GridSearchCV
 import matplotlib.pyplot as plt
 
-class randomForest():
+class RandomForest():
     def __init__(self, df, stock_name):
         self.df = df
         self.features = ['Previous_Close', 'RSI', 'EMA_20', 'SMA_20', 'MACD', 'MACD_signal', 'MACD_histogram']

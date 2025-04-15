@@ -2,7 +2,7 @@ from src.stock_model.stockDataUtils import StockDataUtils
 from src.stock_model.technicalIndicatorUtils import TechnicalIndicatorUtil
 from src.stock_model.newsUtils import StockNews
 from src.stock_model.ai_models.lstmcnnHybrid import CnnLSTMHybrid
-from src.stock_model.ai_models.randomforest import randomForest
+from src.stock_model.ai_models.randomforest import RandomForest
 from src.stock_model.ai_models.decisiontree import DecisionTreeModel
 from src.stock_model.ai_models.stacking import StackedModel
 from src.displayStockInformation import display_info
@@ -63,28 +63,48 @@ class Stock:
         self.df['Compound Sentiment'].iloc[-num_news_entries:] = self.news_df['Compound Sentiment'].iloc[-num_news_entries:]
         self.df.drop(['index'], axis=1)
         self.df.to_csv('ai_table.csv')
-
+ 
     def _train_ai_models(self):
         print("Training AI...")
+        
         hybrid = CnnLSTMHybrid.create(self.df, self.stock_name)
         hybrid_predictions = hybrid.predict_future()
-
         hybrid.plot_prediction()
-        #random_forest = randomForest.create(self.df, self.stock_name)
-        #rf_predictions = random_forest.predict_future()
-        #print("\nPredictions for the next 10 days:")
-        #print(random_forest_predictions)
-        #simple= simple_averages(rf_predictions,hybrid_predictions)
-        #weighted = weighted_averages(rf_predictions,hybrid_predictions)
-        #print("\n Simple Averages for the next 10 days:")
-        #print(simple)
-        #print("\n Weighted Averages for the next 10 days:")
-        #print(weighted)       
-        #stacked = StackedModel.create(self.df)
-        #decision = DecisionTreeModel.create(self.df)
-        #signal=decision.predict_future()
-        #print(signal)
-    
+
+        random_forest = RandomForest.create(self.df, self.stock_name)
+        rf_predictions = random_forest.predict_future()
+        
+        print("\nPredictions for the next 10 days:")
+        for i in range(10):
+            print("  Day", i + 1)
+            print("    Random Forest:", rf_predictions['Predicted_Price'].iloc[i])
+            print("    Hybrid Model:", hybrid_predictions['Predicted_Price'].iloc[i])
+        
+        simple = simple_averages(rf_predictions['Predicted_Price'], hybrid_predictions['Predicted_Price'])
+        weighted = weighted_averages(rf_predictions['Predicted_Price'], hybrid_predictions['Predicted_Price'])
+        
+        print("\nSimple Averages for the next 10 days:")
+        for i, avg in enumerate(simple):
+            print("  Day", i + 1, avg)
+        
+        print("\nWeighted Averages for the next 10 days:")
+        for i, avg in enumerate(weighted):
+            print("  Day", i + 1, avg)
+        
+        stacked = StackedModel.create(self.df)
+        prediction = stacked.predict_future()
+        
+        print("\nPredictions for the next 10 days (Stacked Model):")
+        for i in range(10):
+            print("  Day", i + 1, prediction['Signal'].iloc[i])
+        
+        decision = DecisionTreeModel.create(self.df)
+        signal = decision.predict_future()
+        
+        print("\nSignal from Decision Tree Model:")
+        print("  ", signal)
+        print("\nSignal from Decision Tree Model:")
+        print("  ", signal)
     def print_df(self):
         print(self.df)
         print(self.news_df)
