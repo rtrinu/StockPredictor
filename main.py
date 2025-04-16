@@ -1,15 +1,17 @@
 from src.stock_model.stock import Stock
 import os
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 from flask import Flask, render_template, send_file, request, session
 from backend.stock_plot_png import plot_close_data
 from src.stock_model.stock import Stock
 import matplotlib
+import secrets
 matplotlib.use('Agg')
 
 app = Flask(__name__)
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
-
+app.secret_key = secrets.token_hex(16)
 
 @app.route('/')
 def index():
@@ -29,16 +31,20 @@ def generate_stock_plot():
 def stock_input():
     return render_template('stockInput.html')
 
-@app.route('/get_stock_data',methods=['GET'])
+@app.route('/get-stock-data',methods=['GET'])
 def get_stock_data():
     stock_symbol = request.args.get('stock','').strip().upper()
     if not stock_symbol:
         return "Input a valid symbol", 400
+    
     user_stock = Stock.create(stock_symbol)
     user_stock_symbol = user_stock.return_stock_symbol()
     stock_data = user_stock.display_information()
     session['stock_symbol'] = stock_symbol
+    
     return render_template('stockDisplay.html',stock_data=stock_data, stock=stock_symbol)
+
+
 def main():
     #hybrid = CnnLSTMHybrid.create()
     #randomForest = RandomForestModel.create()
@@ -47,5 +53,5 @@ def main():
     user_stock.create_and_train()
 
 if __name__ == "__main__":
-    #app.run(debug=True)
-    main()
+    app.run(debug=True)
+    #main()

@@ -69,7 +69,7 @@ class Stock:
         
         hybrid = CnnLSTMHybrid.create(self.df, self.stock_name)
         hybrid_predictions = hybrid.predict_future()
-        hybrid.plot_prediction()
+        #hybrid.plot_prediction()
 
         random_forest = RandomForest.create(self.df, self.stock_name)
         rf_predictions = random_forest.predict_future()
@@ -101,8 +101,6 @@ class Stock:
         decision = DecisionTreeModel.create(self.df)
         signal = decision.predict_future()
         
-        print("\nSignal from Decision Tree Model:")
-        print("  ", signal)
         print("\nSignal from Decision Tree Model:")
         print("  ", signal)
     def print_df(self):
