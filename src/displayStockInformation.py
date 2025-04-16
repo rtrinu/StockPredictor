@@ -1,4 +1,6 @@
 import pandas as pd
+import matplotlib.pyplot as plt
+import os
 
 def display_info(df):
     df['Close'] = pd.to_numeric(df['Close'], errors='coerce')
@@ -27,3 +29,20 @@ def display_info(df):
         return pd.Series(stock_data)
     else:
         raise ValueError("Stock data is not valid")
+    
+def display_plot(df):
+    close_prices = df['Close']
+    dates = df['Date']
+    plt.figure(figsize=(12,6))
+    plt.plot(dates,close_prices)
+    plt.title('Stock Closing Prices')
+    plt.xlabel('Date')
+    plt.ylabel('Price')
+    plt.xticks(rotation=45)
+    plt.grid(True)
+    plt.tight_layout()
+    filename = 'static.png'
+    filepath = os.path.join('static', filename)
+    plt.savefig(filepath)
+    plt.close() 
+    return filename, filepath

@@ -31,6 +31,7 @@ def generate_stock_plot():
 def stock_input():
     return render_template('stockInput.html')
 
+
 @app.route('/get-stock-data',methods=['GET'])
 def get_stock_data():
     stock_symbol = request.args.get('stock','').strip().upper()
@@ -40,9 +41,10 @@ def get_stock_data():
     user_stock = Stock.create(stock_symbol)
     user_stock_symbol = user_stock.return_stock_symbol()
     stock_data = user_stock.display_information()
+    stock_plot = user_stock.display_plot()
     session['stock_symbol'] = stock_symbol
     
-    return render_template('stockDisplay.html',stock_data=stock_data, stock=stock_symbol)
+    return render_template('stockDisplay.html',stock_data=stock_data, stock=stock_symbol, chart_filename = 'static.png' )
 
 
 def main():

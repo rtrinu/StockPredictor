@@ -5,7 +5,7 @@ from src.stock_model.ai_models.lstmcnnHybrid import CnnLSTMHybrid
 from src.stock_model.ai_models.randomforest import RandomForest
 from src.stock_model.ai_models.decisiontree import DecisionTreeModel
 from src.stock_model.ai_models.stacking import StackedModel
-from src.displayStockInformation import display_info
+from src.displayStockInformation import display_info, display_plot
 import pandas as pd
 from src.stock_model.stockPrediction import simple_averages, weighted_averages
 class Stock:
@@ -109,6 +109,9 @@ class Stock:
 
     def display_information(self):
         return display_info(self.df)
+    
+    def display_plot(self):
+        return display_plot(self.df)
     
     def return_stock_symbol(self):
         return self.stock_symbol
