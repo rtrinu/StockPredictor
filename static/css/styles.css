@@ -7,7 +7,7 @@
 body {
     font-family: Arial, sans-serif;
     line-height: 1.6;
-    background-color: #f0f0f0;
+    background-color: #f4f4f4;
     color: #333;
     padding-top: 70px;
 }
@@ -56,7 +56,7 @@ header ul li a:hover {
 
 #home {
     background-color: #7d7d7d;
-    color: white;
+    color: #555;
     padding: 100px 20px;
     text-align: center;
 }
@@ -100,7 +100,7 @@ header ul li a:hover {
 }
 
 .cta-button {
-    background-color: #444;
+    background-color: #666;
     color: white;
     padding: 15px 30px;
     font-size: 18px;
@@ -110,7 +110,14 @@ header ul li a:hover {
 }
 
 .cta-button:hover {
-    background-color: #616161;
+    background-color: #4d4d4d;
+}
+
+.card {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    color: #333;
 }
 
 .card-title {
@@ -119,7 +126,7 @@ header ul li a:hover {
 
 .card-text {
     font-size: 16px;
-    color: #777;
+    color: #555;
 }
 
 #how-it-works h2 {
@@ -169,4 +176,32 @@ footer ul li a {
 
 footer ul li a:hover {
     color: #bbbbbb;
+}
+
+.btn-primary {
+    background-color: #666 !important;
+    border-color: #666 !important;
+    color: white !important;
+}
+
+.btn-primary:hover {
+    background-color: #4d4d4d !important;
+    border-color: #4d4d4d !important;
+}
+
+.form-control {
+    background-color: #f9f9f9;
+    color: #333;
+    border: 1px solid #ccc;
+}
+
+.form-control:focus {
+    border-color: #999;
+    box-shadow: 0 0 0 0.2rem rgba(153, 153, 153, 0.25);
+}
+
+.alert-primary {
+    background-color: #e0e0e0;
+    color: #333;
+    border-color: #bfbfbf;
 }

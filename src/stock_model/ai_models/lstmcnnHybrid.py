@@ -39,10 +39,7 @@ class CnnLSTMHybrid():
         self = cls(df, stock_name)
         self.load_model()
         self.load_and_preprocess_data()
-        if self.hybrid_model is None:
-            print(f"No existing model for {self.stock_name}")
-            self.run()
-            self.save_model()
+        self.existing_model()
         self.predict_future_stocks()
         #self.compare_models()
         return self
@@ -143,44 +140,6 @@ class CnnLSTMHybrid():
             self.predictions = self.scaler.inverse_transform(padded)[:, 0]
         else:
             self.predictions = None
-
-    def save_model(self):
-        os.makedirs(self.model_folder, exist_ok=True)
-        model_file = os.path.join(self.model_folder, f"{self.stock_name}_CNNLSTMModel_pickle")
-        with open(model_file, 'wb') as f:
-            pickle.dump(self.hybrid_model, f)
-
-    def load_model(self):
-        model_file = os.path.join(self.model_folder, f"{self.stock_name}_CNNLSTMModel_pickle")
-        if os.path.exists(model_file):
-            with open(model_file, 'rb') as f:
-                self.hybrid_model = pickle.load(f)
-        else:
-            self.hybrid_model = None
-
-    def load_and_preprocess_data(self):
-        self._load_data()
-        self._preprocess_training_data()
-        self._preprocess_testing_data()
-
-    def run(self):
-        self._build_model()
-        self._train()
-
-    def compare_models(self):
-        existing_mse, existing_mae, existing_r2 = self.evaluate_model()
-        self.run()
-        new_mse, new_mae, new_r2 = self.evaluate_model()
-        
-        better = sum([new_mse < existing_mse, new_mae < existing_mae, new_r2 > existing_r2]) >= 2
-        
-        if better:
-            print("New model performs better. Saving the new model.")
-            self.save_model()
-        else:
-            print("Using the existing model.")
-            self.load_model()
-            self.output_predictions()
             
 
     @tf.function(reduce_retracing=True)
@@ -257,7 +216,50 @@ class CnnLSTMHybrid():
         plt.savefig(filepath, dpi=300, bbox_inches='tight')
         plt.close()
 
+    def save_model(self):
+        os.makedirs(self.model_folder, exist_ok=True)
+        model_file = os.path.join(self.model_folder, f"{self.stock_name}_CNNLSTMModel_pickle")
+        with open(model_file, 'wb') as f:
+            pickle.dump(self.hybrid_model, f)
+
+    def load_model(self):
+        model_file = os.path.join(self.model_folder, f"{self.stock_name}_CNNLSTMModel_pickle")
+        if os.path.exists(model_file):
+            with open(model_file, 'rb') as f:
+                self.hybrid_model = pickle.load(f)
+        else:
+            self.hybrid_model = None
+
+    def load_and_preprocess_data(self):
+        self._load_data()
+        self._preprocess_training_data()
+        self._preprocess_testing_data()
+
+    def run(self):
+        self._build_model()
+        self._train()
+
+    def compare_models(self):
+        existing_mse, existing_mae, existing_r2 = self.evaluate_model()
+        self.run()
+        new_mse, new_mae, new_r2 = self.evaluate_model()
+        
+        better = sum([new_mse < existing_mse, new_mae < existing_mae, new_r2 > existing_r2]) >= 2
+        
+        if better:
+            print("New model performs better. Saving the new model.")
+            self.save_model()
+        else:
+            print("Using the existing model.")
+            self.load_model()
+            self.output_predictions()
+
     def predict_future_stocks(self):
         self.output_predictions()
         self.predict_future()
         self.plot_prediction()
+
+    def existing_model(self):
+        if self.hybrid_model is None:
+            self.run()
+            self.save_model()

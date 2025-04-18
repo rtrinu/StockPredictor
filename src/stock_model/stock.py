@@ -73,9 +73,9 @@ class Stock:
 
         self.random_forest = RandomForest.create(self.df, self.stock_name)
         
-        self.stacked = StackedModel.create(self.df)
+        self.stacked = StackedModel.create(self.df,self.stock_name)
         
-        self.decision = DecisionTreeModel.create(self.df)
+        self.decision = DecisionTreeModel.create(self.df,self.stock_name)
 
     def output_predictions(self):
         hybrid_predictions = self.hybrid.predict_future()

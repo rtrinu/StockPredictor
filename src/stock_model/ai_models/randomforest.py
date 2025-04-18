@@ -23,9 +23,7 @@ class RandomForest():
         self = cls(df, stock_name)
         self.load_and_process_data()
         self.load_model()
-        if self.model is None:
-            self.run()
-            self.save_model()
+        self.existing_model()
         self.prediction()
         return self
 
@@ -76,6 +74,40 @@ class RandomForest():
             print(f"R-squared Score: {r2}")
             return mse, mae, r2
         return None, None, None
+    
+    def predict_step(self, input_data):
+        return self.model.predict(input_data)
+
+    def predict_future(self, forecast_horizon=10):
+        last_sequence = self.data.iloc[-1].copy()
+        future_predictions = []
+
+        for _ in range(forecast_horizon):
+            input_data = last_sequence[self.features].values.reshape(1, -1)
+            predicted_price = self.predict_step(input_data)[0]
+            future_predictions.append(predicted_price)
+
+            last_sequence['Previous_Close'] = predicted_price
+            last_sequence[self.target] = predicted_price
+
+        if isinstance(self.df.index, pd.DatetimeIndex):
+            last_date = self.df.index[-1]
+        else:
+            last_date = pd.Timestamp.today()
+
+        future_dates = pd.date_range(
+            start=last_date + pd.Timedelta(days=1), 
+            periods=forecast_horizon, 
+            freq='B'
+        )
+        future_dates.floor('T')
+
+        forecast_df = pd.DataFrame({
+            'Predicted_Price': future_predictions
+        }, index=future_dates)
+        forecast_df.index = forecast_df.index.date
+        
+        return forecast_df
 
     def save_model(self):
         os.makedirs(self.model_folder, exist_ok=True)
@@ -119,36 +151,8 @@ class RandomForest():
             self.load_model()
             self.prediction()
 
-    def predict_step(self, input_data):
-        return self.model.predict(input_data)
-
-    def predict_future(self, forecast_horizon=10):
-        last_sequence = self.data.iloc[-1].copy()
-        future_predictions = []
-
-        for _ in range(forecast_horizon):
-            input_data = last_sequence[self.features].values.reshape(1, -1)
-            predicted_price = self.predict_step(input_data)[0]
-            future_predictions.append(predicted_price)
-
-            last_sequence['Previous_Close'] = predicted_price
-            last_sequence[self.target] = predicted_price
-
-        if isinstance(self.df.index, pd.DatetimeIndex):
-            last_date = self.df.index[-1]
-        else:
-            last_date = pd.Timestamp.today()
-
-        future_dates = pd.date_range(
-            start=last_date + pd.Timedelta(days=1), 
-            periods=forecast_horizon, 
-            freq='B'
-        )
-        future_dates.floor('T')
-
-        forecast_df = pd.DataFrame({
-            'Predicted_Price': future_predictions
-        }, index=future_dates)
-        forecast_df.index = forecast_df.index.date
-        
-        return forecast_df
+    def existing_model(self):
+        if self.model is None:
+            self.run()
+            self.save_model()
+    

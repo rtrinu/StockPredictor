@@ -6,21 +6,24 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.svm import SVR
 from sklearn.metrics import mean_squared_error, r2_score
+import os
+import pickle
 
 class StackedModel():
-    def __init__(self,df):
+    def __init__(self,df,stock_name):
         self.df = df
-        
+        self.stock_name = stock_name
+        self.model_folder = 'models'
+        self.model = None
     @classmethod
-    def create(cls,df):
-        self = cls(df)
+    def create(cls,df, stock_name):
+        self = cls(df,stock_name)
         self.load_data()
-        self.build_models()
-        self.train()
+        self.run()
         self.predict()
         self.evaluate()
         return self
-
+    
     def load_data(self):
         self.df = self.df.dropna()
         x = self.df.drop(columns=['Signal', 'Date']) 
@@ -45,9 +48,9 @@ class StackedModel():
         y_pred = self.predict()
         mse = mean_squared_error(self.y_test, y_pred)
         r2 = r2_score(self.y_test, y_pred)
-        print(f"Mean Squared Error of Stacked Model: {mse:.2f}")
-        print(f"R-squared Score of Stacked Model: {r2:.2f}")
-
+        #print(f"Mean Squared Error of Stacked Model: {mse:.2f}")
+        #print(f"R-squared Score of Stacked Model: {r2:.2f}")
+    
     def predict_future(self,days=10):
         last_data_point = self.df.iloc[-1].drop(['Signal', 'Date'])
         future_predictions = []
@@ -79,3 +82,8 @@ class StackedModel():
         forecast_df.index.name = 'Date'
         forecast_df.index = forecast_df.index.date
         return forecast_df
+    
+
+    def run(self):
+        self.build_models()
+        self.train()

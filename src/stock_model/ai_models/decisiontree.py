@@ -4,21 +4,27 @@ import warnings
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
 from sklearn import metrics
+import os
+import pickle
 warnings.filterwarnings(action='ignore', category=UserWarning, module='sklearn')
 
 class DecisionTreeModel():
-    def __init__(self,df):
+    def __init__(self,df,stock_name):
         self.df = df
+        self.stock_name = stock_name
         self.features = ['Close','High','Low','Open','Previous_Close','RSI','EMA_20','SMA_20','MACD','MACD_signal','MACD_histogram']
         self.target = 'Signal'
         self.lookback = 1
         self.forecast_horizon = 10
+        self.model_folder = 'models'
+        self.model = None
 
     @classmethod
-    def create(cls,df):
-        self = cls(df)
+    def create(cls,df,stock_name):
+        self = cls(df,stock_name)
+        self.load_model()
         self.process_data()
-        self.build()
+        self.existing_model()
         self.predict()
         self.evaluate()
         return self
@@ -72,3 +78,24 @@ class DecisionTreeModel():
             forecast_df.index = forecast_df.index.date
             
             return forecast_df
+    
+    def save_model(self):
+        os.makedirs(self.model_folder, exist_ok=True)
+        model_file = os.path.join(self.model_folder, f"{self.stock_name}_decision_pickle")
+        with open(model_file, 'wb') as f:
+            pickle.dump(self.model, f)
+
+    def load_model(self):
+        model_file = os.path.join(self.model_folder, f"{self.stock_name}_decision_pickle")
+        if os.path.exists(model_file):
+            with open(model_file, 'rb') as f:
+                self.model = pickle.load(f)
+        else:
+            self.model = None
+
+    def existing_model(self):
+        if self.model is None:
+            self.build()
+            self.save_model()
+
+    
