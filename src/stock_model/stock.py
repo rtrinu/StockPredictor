@@ -67,42 +67,43 @@ class Stock:
     def _train_ai_models(self):
         print("Training AI...")
         
-        hybrid = CnnLSTMHybrid.create(self.df, self.stock_name)
-        hybrid_predictions = hybrid.predict_future()
+        self.hybrid = CnnLSTMHybrid.create(self.df, self.stock_name)
+        
         #hybrid.plot_prediction()
 
-        random_forest = RandomForest.create(self.df, self.stock_name)
-        rf_predictions = random_forest.predict_future()
+        self.random_forest = RandomForest.create(self.df, self.stock_name)
         
-        print("\nPredictions for the next 10 days:")
-        for i in range(10):
-            print("  Day", i + 1)
-            print("    Random Forest:", rf_predictions['Predicted_Price'].iloc[i])
-            print("    Hybrid Model:", hybrid_predictions['Predicted_Price'].iloc[i])
+        self.stacked = StackedModel.create(self.df)
         
-        simple = simple_averages(rf_predictions['Predicted_Price'], hybrid_predictions['Predicted_Price'])
-        weighted = weighted_averages(rf_predictions['Predicted_Price'], hybrid_predictions['Predicted_Price'])
+        self.decision = DecisionTreeModel.create(self.df)
+
+    def output_predictions(self):
+        hybrid_predictions = self.hybrid.predict_future()
+        rf_predictions = self.random_forest.predict_future()
+        stacked_predictions = self.stacked.predict_future()
+        decision_predictions = self.decision.predict_future()
+        simple = simple_averages(rf_predictions['Predicted_Price'], hybrid_predictions['Predicted_Price']).tolist()
+        weighted = weighted_averages(rf_predictions['Predicted_Price'], hybrid_predictions['Predicted_Price']).tolist()
+       
+        numerical_models = {
+            'Hybrid model':hybrid_predictions.to_dict(orient='records'),
+            'Random Forest model':rf_predictions.to_dict(orient='records')
+        }
+        averages = {
+            'Simple':simple,
+            'Weighted':weighted
+            }
+        signals = {
+            'Stacked Model':stacked_predictions.to_dict(orient='records'),
+            'Decision Tree':decision_predictions.to_dict(orient='records')
+        }
+        return {
+        'numerical_models': numerical_models,
+        'averages': averages,
+        'signals': signals
+        }
+
         
-        print("\nSimple Averages for the next 10 days:")
-        for i, avg in enumerate(simple):
-            print("  Day", i + 1, avg)
-        
-        print("\nWeighted Averages for the next 10 days:")
-        for i, avg in enumerate(weighted):
-            print("  Day", i + 1, avg)
-        
-        stacked = StackedModel.create(self.df)
-        prediction = stacked.predict_future()
-        
-        print("\nPredictions for the next 10 days (Stacked Model):")
-        for i in range(10):
-            print("  Day", i + 1, prediction['Signal'].iloc[i])
-        
-        decision = DecisionTreeModel.create(self.df)
-        signal = decision.predict_future()
-        
-        print("\nSignal from Decision Tree Model:")
-        print("  ", signal)
     def print_df(self):
         print(self.df)
         print(self.news_df)
