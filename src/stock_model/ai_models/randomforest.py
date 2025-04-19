@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 class RandomForest():
     def __init__(self, df, stock_name):
         self.df = df
-        self.features = ['Previous_Close', 'RSI', 'EMA_20', 'SMA_20', 'MACD', 'MACD_signal', 'MACD_histogram']
+        self.features = ['Previous_Close', 'RSI', 'EMA_20', 'SMA_20', 'MACD', 'MACD_signal', 'MACD_histogram','Compound Sentiment']
         self.target = 'Close'
         self.model = None
         self.stock_name = stock_name
@@ -35,6 +35,9 @@ class RandomForest():
         self.training_data_len = math.ceil(len(self.dataset) * 0.8)
 
     def process_data(self):
+        if self.data.isnull().values.any():
+            print("Missing values found. Handling missing values...")
+            self.data.dropna(inplace=True)
         x = self.data[self.features]
         y = self.data[self.target]
         y = y.values.squeeze()
@@ -80,6 +83,14 @@ class RandomForest():
 
     def predict_future(self, forecast_horizon=10):
         last_sequence = self.data.iloc[-1].copy()
+
+        rolling_prices = list(self.data['Close'].iloc[-20:])
+        ema_20 = self.data['EMA_20'].iloc[-1]
+        ema_12 = self.data['MACD'].iloc[-1] + self.data['MACD_signal'].iloc[-1]
+        ema_26 = ema_12 - self.data['MACD'].iloc[-1]
+        macd_signal = self.data['MACD_signal'].iloc[-1]
+        compound_sentiment = self.data['Compound Sentiment'].iloc[-1]
+
         future_predictions = []
 
         for _ in range(forecast_horizon):
@@ -88,7 +99,33 @@ class RandomForest():
             future_predictions.append(predicted_price)
 
             last_sequence['Previous_Close'] = predicted_price
-            last_sequence[self.target] = predicted_price
+            last_sequence['Close'] = predicted_price
+
+            rolling_prices.append(predicted_price)
+            if len(rolling_prices) > 20:
+                rolling_prices.pop(0)
+            last_sequence['SMA_20'] = sum(rolling_prices) / len(rolling_prices)
+
+            alpha_ema_20 = 2 / (20 + 1)
+            ema_20 = (predicted_price - ema_20) * alpha_ema_20 + ema_20
+            last_sequence['EMA_20'] = ema_20
+
+            alpha_ema_12 = 2 / (12 + 1)
+            alpha_ema_26 = 2 / (26 + 1)
+            ema_12 = (predicted_price - ema_12) * alpha_ema_12 + ema_12
+            ema_26 = (predicted_price - ema_26) * alpha_ema_26 + ema_26
+            macd = ema_12 - ema_26
+            last_sequence['MACD'] = macd
+            alpha_macd_signal = 2 / (9 + 1)
+            macd_signal = (macd - macd_signal) * alpha_macd_signal + macd_signal
+            last_sequence['MACD_signal'] = macd_signal
+            last_sequence['MACD_histogram'] = macd - macd_signal
+
+            gain = max(0, predicted_price - last_sequence['Previous_Close'])
+            loss = max(0, last_sequence['Previous_Close'] - predicted_price)
+            rs = gain / loss if loss != 0 else 0
+            rsi = 100 - (100 / (1 + rs))
+            last_sequence['RSI'] = rsi
 
         if isinstance(self.df.index, pd.DatetimeIndex):
             last_date = self.df.index[-1]
@@ -107,7 +144,7 @@ class RandomForest():
         }, index=future_dates)
         forecast_df.index = forecast_df.index.date
         
-        return forecast_df
+        return forecast_df 
 
     def save_model(self):
         os.makedirs(self.model_folder, exist_ok=True)

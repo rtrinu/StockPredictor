@@ -76,7 +76,8 @@ def main():
     user_input = input("Input a Stock: ")
     user_stock = Stock.create(user_input)
     user_stock.create_and_train()
+    user_stock.output_predictions()
 
 if __name__ == "__main__":
-    app.run(debug=True)
-    #main()
+    #app.run(debug=True)
+    main()

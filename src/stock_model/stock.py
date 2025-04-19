@@ -97,6 +97,7 @@ class Stock:
             'Stacked Model':stacked_predictions.to_dict(orient='records'),
             'Decision Tree':decision_predictions.to_dict(orient='records')
         }
+        print(rf_predictions)
         return {
         'numerical_models': numerical_models,
         'averages': averages,
