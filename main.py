@@ -68,11 +68,10 @@ def start_training():
 def predictions():
     predictions = session.get('predictions', {})
     stock_symbol = session.get('stock_symbol', '')
-    return render_template('predictions.html', prediction_data=predictions, stock_symbol=stock_symbol)
+    return render_template('stock_prediction.html', prediction_data=predictions, stock_symbol=stock_symbol)
 
 def main():
-    #hybrid = CnnLSTMHybrid.create()
-    #randomForest = RandomForestModel.create()
+
     user_input = input("Input a Stock: ")
     user_stock = Stock.create(user_input)
     user_stock.create_and_train()

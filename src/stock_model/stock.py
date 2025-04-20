@@ -88,8 +88,7 @@ class Stock:
         weighted = weighted_averages(rf_predictions['Predicted_Price'], hybrid_predictions['Predicted_Price']).tolist()
        
         numerical_models = {
-            'Hybrid model':hybrid_predictions.to_dict(orient='records'),
-            'Random Forest model':rf_predictions.to_dict(orient='records')
+            'Hybrid model':hybrid_predictions.to_dict(orient='records')
         }
         averages = {
             'Simple':simple,
