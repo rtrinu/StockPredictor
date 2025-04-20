@@ -11,3 +11,4 @@ venv/
 models/
 dfcolumns.txt
 ai_table.csv
+*.png
