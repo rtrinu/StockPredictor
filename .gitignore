@@ -12,3 +12,6 @@ models/
 dfcolumns.txt
 ai_table.csv
 *.png
+app/*.png
+static/*.png
+**/*.png
