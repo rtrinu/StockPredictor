@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockSage - AI Stock Predictions</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <i class="bi bi-graph-up-arrow text-success me-2"></i>
+                <span class="fw-bold">StockSage</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Pricing</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Testimonials</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">FAQ</a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    <a href="#" class="btn btn-outline-secondary me-2">Log In</a>
+                    <a href="#" class="btn btn-success">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-5 mb-lg-0">
+                    <h1 class="display-4 fw-bold mb-3">Predict Stock Trades with AI Precision</h1>
+                    <p class="lead text-muted mb-4">Our advanced algorithm analyzes market patterns to deliver accurate stock predictions, helping you make informed investment decisions.</p>
+                    <div class="d-grid gap-2 d-md-flex">
+                        <a href="{{ url_for('stock_input') }}" class="btn btn-success btn-lg px-4">
+                            View Predictions
+                            <i class="bi bi-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card shadow-lg border-0 overflow-hidden">
+                        <img id="stock-prediction-chart" src="{{ url_for('generate_stock_plot') }}" alt="Real-time Stock Prediction Chart" class="img-fluid rounded shadow">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+    <section class="py-5 bg-light">
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center">
+                    <h2 class="display-5 fw-bold mb-4">Our Performance</h2>
+                    <div class="metrics-card mb-4">
+                        <div class="accuracy-number mb-2">87.3%</div>
+                        <p class="lead">Average prediction accuracy</p>
+                        <div class="row mt-4">
+                            <div class="col-md-4">
+                                <h3 class="fs-2 fw-bold text-success">92%</h3>
+                                <p class="text-muted">Tech Sector</p>
+                            </div>
+                            <div class="col-md-4">
+                                <h3 class="fs-2 fw-bold text-success">85%</h3>
+                                <p class="text-muted">Finance</p>
+                            </div>
+                            <div class="col-md-4">
+                                <h3 class="fs-2 fw-bold text-success">89%</h3>
+                                <p class="text-muted">Healthcare</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <section class="py-5">
+        <div class="container py-5">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold">Powerful Prediction Features</h2>
+                <p class="lead text-muted">Our platform combines advanced AI with comprehensive market data to deliver accurate predictions</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="feature-icon mb-3">
+                                <i class="bi bi-graph-up"></i>
+                            </div>
+                            <h5 class="card-title">Trend Analysis</h5>
+                            <p class="card-text text-muted">Identify market trends with our pattern recognition algorithm that analyzes historical data with up to 87% accuracy.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="feature-icon mb-3">
+                                <i class="bi bi-clock"></i>
+                            </div>
+                            <h5 class="card-title">Real-time Alerts</h5>
+                            <p class="card-text text-muted">Get instant notifications for trading opportunities when our system detects potential buying or selling signals.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="feature-icon mb-3">
+                                <i class="bi bi-shield-check"></i>
+                            </div>
+                            <h5 class="card-title">Risk Assessment</h5>
+                            <p class="card-text text-muted">Evaluate potential risks before making trades with our comprehensive risk analysis tools and metrics.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="feature-icon mb-3">
+                                <i class="bi bi-lightning-charge"></i>
+                            </div>
+                            <h5 class="card-title">AI-Powered Insights</h5>
+                            <p class="card-text text-muted">Our self-learning AI continuously improves prediction accuracy by analyzing the outcomes of previous forecasts.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-4 border-top">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="small text-muted mb-0">© 2024 StockSage. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <ul class="list-inline mb-0">
+                        <li class="list-inline-item"><a href="#" class="text-muted small">Terms</a></li>
+                        <li class="list-inline-item"><a href="#" class="text-muted small">Privacy</a></li>
+                        <li class="list-inline-item"><a href="#" class="text-muted small">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

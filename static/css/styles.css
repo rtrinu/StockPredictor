@@ -1,206 +1,27 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+.hero-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 80px 0;
 }
+<<<<<<< HEAD
 
 body {
     font-family: Arial, sans-serif;
     line-height: 1.6;
     background-color: #f4f4f4;
     color: #333;
+=======
+.feature-icon {
+    font-size: 2.5rem;
+    color: #198754;
+>>>>>>> cb24ff7 (New designs for webpages)
 }
-
-header {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    background-color: #333;
-    color: white;
-    padding: 15px 0;
-    z-index: 1000;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-header nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
-
-header ul {
-    list-style: none;
-    display: flex;
-}
-
-header ul li {
-    margin-left: 20px;
-}
-
-header ul li a {
-    text-decoration: none;
-    color: white;
-    font-size: 16px;
-    transition: color 0.3s;
-}
-
-header ul li a:hover {
-    color: #bbbbbb;
-}
-
-#home {
-    background-color: #7d7d7d;
-    color: #555;
-    padding: 100px 20px;
-    text-align: center;
-}
-
-#home h1 {
-    font-size: 36px;
-    margin-bottom: 20px;
-}
-
-#home p {
-    font-size: 18px;
-    margin-bottom: 30px;
-}
-
-.btn-get-started {
-    background-color: #616161;
-    color: white;
-    padding: 15px 30px;
-    font-size: 18px;
-    text-transform: uppercase;
-    border-radius: 5px;
-    border: none;
-    transition: background-color 0.3s, transform 0.3s;
-    display: inline-block;
-    text-decoration: none;
-}
-
-.btn-get-started:hover {
-    background-color: #505050;
-    transform: scale(1.05);
-}
-
-.btn-get-started:active {
-    background-color: #404040;
-    transform: scale(0.98);
-}
-
-.btn-get-started:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(97, 97, 97, 0.5);
-}
-
-.cta-button {
-    background-color: #666;
-    color: white;
-    padding: 15px 30px;
-    font-size: 18px;
-    text-decoration: none;
-    border-radius: 5px;
-    transition: background-color 0.3s;
-}
-
-.cta-button:hover {
-    background-color: #4d4d4d;
-}
-
-.card {
-    background-color: #fff;
-    border: 1px solid #ccc;
+.metrics-card {
+    background-color: #f8f9fa;
     border-radius: 10px;
-    color: #333;
+    padding: 20px;
 }
-
-.card-title {
-    font-size: 22px;
-}
-
-.card-text {
-    font-size: 16px;
-    color: #555;
-}
-
-#how-it-works h2 {
-    font-size: 30px;
-}
-
-.step {
-    font-size: 18px;
-    color: #333;
-}
-
-#live-dashboard h2 {
-    font-size: 30px;
-}
-
-#stock-prediction-chart {
-    max-width: 100%;
-    height: auto;
-    object-fit: contain;
-    border-radius: 8px;
-}
-
-footer {
-    background-color: #333;
-    color: white;
-    padding: 20px 0;
-    text-align: center;
-}
-
-footer ul {
-    list-style: none;
-    padding: 0;
-    margin: 10px 0 0;
-}
-
-footer ul li {
-    display: inline;
-    margin-right: 20px;
-}
-
-footer ul li a {
-    text-decoration: none;
-    color: white;
-    font-size: 14px;
-    transition: color 0.3s;
-}
-
-footer ul li a:hover {
-    color: #bbbbbb;
-}
-
-.btn-primary {
-    background-color: #666 !important;
-    border-color: #666 !important;
-    color: white !important;
-}
-
-.btn-primary:hover {
-    background-color: #4d4d4d !important;
-    border-color: #4d4d4d !important;
-}
-
-.form-control {
-    background-color: #f9f9f9;
-    color: #333;
-    border: 1px solid #ccc;
-}
-
-.form-control:focus {
-    border-color: #999;
-    box-shadow: 0 0 0 0.2rem rgba(153, 153, 153, 0.25);
-}
-
-.alert-primary {
-    background-color: #e0e0e0;
-    color: #333;
-    border-color: #bfbfbf;
+.accuracy-number {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #198754;
 }

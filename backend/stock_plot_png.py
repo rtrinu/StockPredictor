@@ -50,7 +50,7 @@ def plot_close_data():
 
     plt.xlabel('Date')
     plt.ylabel('Closing Price')
-    plt.title('Closing Prices of Two Random Companies')
+    plt.title(f'Closing Prices of {first_company} and {second_company} ')
     
     plt.legend()
     plt.grid(True)

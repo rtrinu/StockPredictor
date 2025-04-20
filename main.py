@@ -15,7 +15,7 @@ app.secret_key = secrets.token_hex(16)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('homepage.html')
 
 @app.route('/generate-stock-plot')
 def generate_stock_plot():
@@ -28,7 +28,7 @@ def generate_stock_plot():
 
 @app.route('/stock-input')
 def stock_input():
-    return render_template('stockInput.html')
+    return render_template('stock_input.html')
 
 
 @app.route('/get-stock-data',methods=['GET'])
