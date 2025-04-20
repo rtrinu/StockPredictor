@@ -85,7 +85,8 @@ def getFTSE100_data():
     'TSCO.L': 'Tesco plc',
     'ULVR.L': 'Unilever plc',
     'VOD.L': 'Vodafone Group plc',
-    'WPP.L': 'WPP plc'
+    'WPP.L': 'WPP plc',
+    'META':'Meta Platforms'
     }   
     df = pd.read_csv('sp500_FTSE100_stocks.csv')
     new_data = pd.DataFrame(list(ftse100_dict.items()),columns=['Symbol','Security'])

@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
+from datetime import datetime, timedelta
 
 def display_info(df):
     df['Close'] = pd.to_numeric(df['Close'], errors='coerce')
@@ -31,15 +32,19 @@ def display_info(df):
         raise ValueError("Stock data is not valid")
     
 def display_plot(df):
-    close_prices = df['Close']
-    dates = df['Date']
-    plt.figure(figsize=(12,6))
+    df['Date'] = pd.to_datetime(df['Date'])
+    today = datetime.today()
+    start_date = today - timedelta(days=90)
+    recent_df = df[df['Date']>=start_date]
+    close_prices = recent_df['Close']
+    dates = recent_df['Date']
+    plt.figure(figsize=(16,8))
     plt.plot(dates,close_prices)
-    plt.title('Stock Closing Prices')
+    plt.title('Stock Closing Prices - Last 90 Days')
     plt.xlabel('Date')
     plt.ylabel('Price')
     plt.xticks(rotation=45)
-    plt.grid(True)
+    plt.grid(False)
     plt.tight_layout()
     filename = 'static.png'
     filepath = os.path.join('static', filename)

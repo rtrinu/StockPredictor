@@ -28,7 +28,9 @@ class Stock:
         #self.train_ai_models()
         #self.print_df()
     
-    
+    def stock_dictionary(self):
+        self.stock_data_utils.fetch_stock_data()
+
     def _gather_data(self):
         self.stock_data_utils.fetch_stock_data()
         self.stock_symbol = self.stock_data_utils.stock_symbol

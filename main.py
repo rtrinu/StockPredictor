@@ -33,7 +33,7 @@ def stock_input():
 
 @app.route('/get-stock-data',methods=['GET'])
 def get_stock_data():
-    stock_symbol = request.args.get('stock','').strip().upper()
+    stock_symbol = request.args.get('stock_symbol','').strip().upper()
     if not stock_symbol:
         return "Input a valid symbol", 400
     
@@ -43,7 +43,7 @@ def get_stock_data():
     stock_plot = user_stock.display_plot()
     session['stock_symbol'] = stock_symbol
     
-    return render_template('stockDisplay.html',stock_data=stock_data, stock=stock_symbol, chart_filename = 'static.png' )
+    return render_template('stock_display.html',stock_data=stock_data, stock=stock_symbol, chart_filename = 'static.png' )
 
 @app.route('/predict-stock')
 def predict_stock():
