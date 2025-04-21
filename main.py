@@ -61,6 +61,7 @@ def start_training():
     user_stock = Stock.create(stock_symbol)
     user_stock.create_and_train()
     predictions = user_stock.output_predictions()
+    plot= user_stock.display_prediction()
     session['predictions'] = predictions
     return jsonify({'success': True})
     

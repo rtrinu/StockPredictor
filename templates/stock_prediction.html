@@ -58,6 +58,21 @@
                 Based on our analysis of {{ stock_symbol }}, we've generated predictions using multiple models including Hybrid, Random Forest, Stacked, and Decision Tree models. The predictions show potential price movements over the coming days.
             </p>
         </div>
+        <div class="container pb-4">
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h5 class="mb-0">Price History</h5>
+                </div>
+                <div style="position: relative; display: inline-block;">
+
+                    <img 
+                        src="{{ url_for('static', filename='prediction.png') }}" 
+                        alt="{{ stock_symbol }} Stock Chart" 
+                        class="img-fluid rounded"
+                        >
+                </div>
+            </div>
+        </div>
 
         <div class="section-title">
             <i class="bi bi-graph-up"></i>

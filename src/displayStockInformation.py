@@ -2,6 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 from datetime import datetime, timedelta
+import numpy as np
 
 def display_info(df):
     df['Close'] = pd.to_numeric(df['Close'], errors='coerce')
@@ -51,3 +52,32 @@ def display_plot(df):
     plt.savefig(filepath)
     plt.close() 
     return filename, filepath
+
+def display_predictions(predictions_dict):
+    hybrid_prices = [item['Predicted_Price'] for item in predictions_dict['numerical_models']['Hybrid model']]
+    rf_prices = [item['Predicted_Price'] for item in predictions_dict['numerical_models']['Random Forest Model']]
+    simple_averages = predictions_dict['averages']['Simple']
+    weighted_averages = predictions_dict['averages']['Weighted']
+    x = range(len(hybrid_prices))
+
+    plt.figure(figsize=(12, 6))
+    plt.plot(x, hybrid_prices, label='Hybrid Model', linewidth=2)
+    plt.plot(x, simple_averages, label='Simple Average', linewidth=2)
+    plt.plot(x, weighted_averages, label='Weighted Average', linewidth=2)
+
+    plt.title('Price Predictions with Signals', fontsize=14)
+    plt.xlabel('Time Period', fontsize=12)
+    plt.ylabel('Price', fontsize=12)
+    plt.grid(True, linestyle='--', alpha=0.7)
+    plt.legend(loc='best')
+
+    min_price = min(min(hybrid_prices), min(rf_prices), min(simple_averages), min(weighted_averages))
+    max_price = max(max(hybrid_prices), max(rf_prices), max(simple_averages), max(weighted_averages))
+    plt.ylim(min_price - 0.5, max_price + 0.5)
+
+    if not os.path.exists('static'):
+        os.makedirs('static')
+
+    plt.savefig('static/prediction.png', dpi=300, bbox_inches='tight')
+
+    plt.close()

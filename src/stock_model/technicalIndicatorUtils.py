@@ -39,11 +39,24 @@ class TechnicalIndicatorUtil:
             print("No data available to generate signals")
             return
         df['Signal'] = 0
-        buy_condition = (df['EMA_20'] > df['SMA_20']) & (df['MACD'] > df['MACD_signal'])
-        sell_condition = (df['EMA_20'] < df['SMA_20']) & (df['MACD'] < df['MACD_signal'])
-
-        df.loc[buy_condition, 'Signal'] = 1
-        df.loc[sell_condition, 'Signal'] = -1  
+        trend_signals = {
+            'EMA_CROSS': (df['EMA_20'] > df['SMA_20']).astype(int),
+            'MACD_CROSS': (df['MACD'] > df['MACD_signal']).astype(int),
+            'PRICE_VS_EMA': (df['Close'] > df['EMA_20']).astype(int)
+            }
+        rsi_signal = pd.Series(0, index=df.index)
+        rsi_signal[df['RSI'] < 30] = 1
+        rsi_signal[df['RSI'] > 70] = -1
+        
+        def calculate_signal_strength():
+            strength = 0
+            strength += trend_signals['EMA_CROSS'] * 2
+            strength += trend_signals['MACD_CROSS'] * 2
+            strength += trend_signals['PRICE_VS_EMA']
+            strength += rsi_signal
+            return strength
+        signal_strength = calculate_signal_strength()
+        df.loc[signal_strength >= 2, 'Signal'] = 1
+        df.loc[signal_strength <= -2, 'Signal'] = -1
         df.reset_index(inplace=True)
         return df
-        
