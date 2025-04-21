@@ -111,7 +111,7 @@ class Stock:
         print(self.news_df)
 
     def display_information(self):
-        return display_info(self.df)
+        return display_info(self.df, self.stock_name,self.stock_symbol)
     
     def display_plot(self):
         return display_plot(self.df)

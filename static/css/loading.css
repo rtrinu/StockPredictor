@@ -1,0 +1,45 @@
+:root {
+    --primary-color: #5d00b3;
+    --primary-hover: #4a0090;
+    --primary-light: #7b00e6;
+    --secondary-color: #a9a9a9;
+    --positive-color: #4ade80;
+    --negative-color: #f87171;
+    --dark-bg: #0f0f13;
+    --darker-bg: #080810;
+    --card-bg: #16161e;
+    --card-header-bg: #1c1c26;
+    --card-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.4);
+    --card-border-radius: 0.75rem;
+    --border-color: rgba(93, 0, 179, 0.3);
+    --hover-bg: rgba(93, 0, 179, 0.15);
+    --accent-purple: #3a0070;
+    --text-color: #e0e0e0;
+    --text-muted: #a0a0a0;
+}
+
+body {
+    background-color: var(--dark-bg);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+}
+
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-size: 24px;
+    background-color: var(--darker-bg);
+    color: var(--text-color);
+}
+
+.spinner-border {
+    color: var(--primary-color) !important;
+    box-shadow: 0 0 15px var(--primary-light);
+}
+
+.ms-3 {
+    color: var(--text-color);
+}

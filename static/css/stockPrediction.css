@@ -1,25 +1,47 @@
 :root {
-    --primary-color: #198754;
-    --secondary-color: #6c757d;
-    --positive-color: #198754;
-    --negative-color: #dc3545;
-    --light-bg: #f8f9fa;
-    --card-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08);
+    --primary-color: #5d00b3;
+    --primary-hover: #4a0090;
+    --primary-light: #7b00e6;
+    --secondary-color: #a9a9a9;
+    --positive-color: #4ade80;
+    --negative-color: #f87171;
+    --dark-bg: #0f0f13;
+    --darker-bg: #080810;
+    --card-bg: #16161e;
+    --card-header-bg: #1c1c26;
+    --card-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.4);
     --card-border-radius: 0.75rem;
+    --border-color: rgba(93, 0, 179, 0.3);
+    --hover-bg: rgba(93, 0, 179, 0.15);
+    --accent-purple: #3a0070;
 }
 
 body {
-    background-color: #f8f9fa;
+    background-color: var(--dark-bg);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #333;
+    color: #e0e0e0;
 }
 
 .navbar-brand {
     font-weight: 700;
+    color: #ffffff;
+}
+
+.navbar-light {
+    background-color: var(--darker-bg) !important;
+}
+
+.navbar-light .navbar-brand, 
+.navbar-light .nav-link {
+    color: #e0e0e0;
+}
+
+.text-success {
+    color: var(--primary-light) !important;
 }
 
 .page-header {
-    background: linear-gradient(135deg, var(--primary-color) 0%, #0d6efd 100%);
+    background: linear-gradient(135deg, var(--primary-color) 0%, #2d0057 100%);
     color: white;
     padding: 2.5rem 0;
     margin-bottom: 2rem;
@@ -40,48 +62,51 @@ body {
 }
 
 .prediction-card {
-    background-color: white;
+    background-color: var(--card-bg);
     border-radius: var(--card-border-radius);
     box-shadow: var(--card-shadow);
     margin-bottom: 2rem;
     overflow: hidden;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid var(--border-color);
 }
 
 .prediction-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.12);
+    box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.5);
+    border-color: var(--primary-color);
 }
 
 .card-header {
     padding: 1.25rem 1.5rem;
-    background-color: white;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    background-color: var(--card-header-bg);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .card-header h3 {
     margin-bottom: 0;
     font-size: 1.25rem;
     font-weight: 600;
-    color: #333;
+    color: #ffffff;
     display: flex;
     align-items: center;
 }
 
 .card-header h3 i {
     margin-right: 0.75rem;
-    color: var(--primary-color);
+    color: var(--primary-light);
 }
 
 .card-body {
     padding: 1.5rem;
+    background-color: var(--card-bg);
 }
 
 .model-icon {
     width: 40px;
     height: 40px;
-    background-color: rgba(25, 135, 84, 0.1);
-    color: var(--primary-color);
+    background-color: rgba(93, 0, 179, 0.2);
+    color: var(--primary-light);
     border-radius: 8px;
     display: flex;
     align-items: center;
@@ -94,10 +119,11 @@ body {
     border-collapse: separate;
     border-spacing: 0;
     width: 100%;
+    color: #e0e0e0;
 }
 
 .table th {
-    background-color: #f8f9fa;
+    background-color: var(--card-header-bg);
     font-weight: 600;
     text-transform: uppercase;
     font-size: 0.75rem;
@@ -109,13 +135,13 @@ body {
 
 .table td {
     padding: 1rem;
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    border-top: 1px solid var(--border-color);
     vertical-align: middle;
     font-size: 0.95rem;
 }
 
 .table tbody tr:hover {
-    background-color: rgba(25, 135, 84, 0.03);
+    background-color: var(--hover-bg);
 }
 
 .prediction-value {
@@ -143,10 +169,11 @@ body {
 }
 
 .averages-card {
-    background-color: white;
+    background-color: var(--card-bg);
     border-radius: var(--card-border-radius);
     box-shadow: var(--card-shadow);
     margin-bottom: 2rem;
+    border: 1px solid var(--border-color);
 }
 
 .averages-list {
@@ -161,7 +188,7 @@ body {
 .average-item {
     flex: 1;
     min-width: 200px;
-    background-color: #f8f9fa;
+    background-color: var(--card-header-bg);
     border-radius: 0.5rem;
     padding: 1rem;
 }
@@ -175,14 +202,16 @@ body {
 .average-value {
     font-size: 1.5rem;
     font-weight: 600;
+    color: #ffffff;
 }
 
 .footer-actions {
     display: flex;
     justify-content: space-between;
     padding: 1.5rem;
-    background-color: #f8f9fa;
+    background-color: var(--card-header-bg);
     border-radius: 0 0 var(--card-border-radius) var(--card-border-radius);
+    border-top: 1px solid var(--border-color);
 }
 
 .action-btn {
@@ -195,17 +224,44 @@ body {
     transition: all 0.2s ease;
 }
 
+.btn-outline-secondary {
+    color: #e0e0e0;
+    border-color: var(--border-color);
+}
+
+.btn-outline-secondary:hover {
+    background-color: var(--hover-bg);
+    color: #ffffff;
+    border-color: var(--primary-color);
+}
+
+.btn-outline-secondary:active{
+    background-color: var(--hover-bg);
+    color: #ffffff;
+    border-color: var(--accent-purple);
+}
+.btn-success {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-success:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+}
+
 .section-title {
     display: flex;
     align-items: center;
     margin-bottom: 1.5rem;
     padding-bottom: 0.75rem;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid var(--border-color);
+    color: #ffffff;
 }
 
 .section-title i {
     margin-right: 0.75rem;
-    color: var(--primary-color);
+    color: var(--primary-light);
     font-size: 1.5rem;
 }
 
@@ -225,18 +281,18 @@ body {
 }
 
 .signal-badge.buy {
-    background-color: rgba(25, 135, 84, 0.1);
+    background-color: rgba(74, 222, 128, 0.2);
     color: var(--positive-color);
 }
 
 .signal-badge.sell {
-    background-color: rgba(220, 53, 69, 0.1);
+    background-color: rgba(248, 113, 113, 0.2);
     color: var(--negative-color);
 }
 
 .signal-badge.hold {
-    background-color: rgba(255, 193, 7, 0.1);
-    color: #ffc107;
+    background-color: rgba(250, 204, 21, 0.2);
+    color: #facc15;
 }
 
 .signal-badge i {
@@ -244,11 +300,12 @@ body {
 }
 
 .summary-card {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    background: linear-gradient(135deg, #1c1c26 0%, #16161e 100%);
     border-radius: var(--card-border-radius);
     padding: 1.5rem;
     margin-bottom: 2rem;
     border-left: 4px solid var(--primary-color);
+    box-shadow: var(--card-shadow);
 }
 
 .summary-title {
@@ -256,21 +313,23 @@ body {
     margin-bottom: 1rem;
     display: flex;
     align-items: center;
+    color: #ffffff;
 }
 
 .summary-title i {
     margin-right: 0.75rem;
-    color: var(--primary-color);
+    color: var(--primary-light);
 }
 
 .summary-content {
     font-size: 1.1rem;
     line-height: 1.6;
+    color: #e0e0e0;
 }
 
 .confidence-meter {
     height: 8px;
-    background-color: #e9ecef;
+    background-color: var(--card-header-bg);
     border-radius: 4px;
     margin-top: 0.5rem;
     overflow: hidden;
@@ -313,6 +372,105 @@ body {
     text-align: center;
     font-size: 0.875rem;
     font-weight: 600;
+    color: #ffffff;
+}
+
+.day-prediction-card {
+    background-color: var(--card-header-bg);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    height: 100%;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.day-prediction-card:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+.day-header {
+    background-color: var(--accent-purple);
+    padding: 0.75rem;
+    font-weight: 600;
+    color: #ffffff;
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.day-body {
+    padding: 1rem;
+}
+
+.prediction-item {
+    margin-bottom: 0.75rem;
+}
+
+.prediction-item:last-child {
+    margin-bottom: 0;
+}
+
+.prediction-label {
+    font-size: 0.75rem;
+    color: var(--secondary-color);
+    margin-bottom: 0.25rem;
+}
+
+.prediction-highlight {
+    color: var(--primary-light);
+    font-weight: 700;
+}
+
+.chart-container {
+    background-color: var(--card-bg);
+    border-radius: var(--card-border-radius);
+    box-shadow: var(--card-shadow);
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border-color);
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    color: #ffffff;
+}
+
+.chart-wrapper {
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    background-color: var(--card-header-bg);
+}
+
+.alert-info {
+    background-color: rgba(93, 0, 179, 0.15);
+    color: #d8b4fe;
+    border-color: rgba(93, 0, 179, 0.3);
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--darker-bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--accent-purple);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+}
+#nav-button{
+
 }
 
 @media (max-width: 768px) {

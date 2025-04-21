@@ -4,7 +4,7 @@ import os
 from datetime import datetime, timedelta
 import numpy as np
 
-def display_info(df):
+def display_info(df, stock_name, symbol):
     df['Close'] = pd.to_numeric(df['Close'], errors='coerce')
     current_price = df['Close'].iloc[-1]
     
@@ -18,6 +18,8 @@ def display_info(df):
     volume = df['Volume'].iloc[-1]
 
     stock_data = {
+        "company_name":stock_name,
+        "stock_symbol":symbol,
         "current_price": f"{float(current_price):,.2f}", 
         "price_change": f"{float(price_change):,.2f}",
         "price_change_percentage": f"{float(price_percentage_change):.2f}%",  

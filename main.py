@@ -43,7 +43,8 @@ def get_stock_data():
     stock_plot = user_stock.display_plot()
     session['stock_symbol'] = stock_symbol
     
-    return render_template('stock_display.html',stock_data=stock_data, stock=stock_symbol, chart_filename = 'static.png' )
+    return render_template('stock_display.html',stock_data=stock_data, stock=stock_symbol, chart_filename = 'static.png',
+                           stock_name = user_stock_symbol )
 
 @app.route('/predict-stock')
 def predict_stock():

@@ -1,27 +1,205 @@
-.hero-section {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    padding: 80px 0;
+:root {
+    --primary-color: #5d00b3;
+    --primary-hover: #4a0090;
+    --primary-light: #7b00e6;
+    --secondary-color: #a9a9a9;
+    --positive-color: #4ade80;
+    --negative-color: #f87171;
+    --dark-bg: #0f0f13;
+    --darker-bg: #080810;
+    --card-bg: #16161e;
+    --card-header-bg: #1c1c26;
+    --card-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.4);
+    --card-border-radius: 0.75rem;
+    --border-color: rgba(93, 0, 179, 0.3);
+    --hover-bg: rgba(93, 0, 179, 0.15);
+    --accent-purple: #3a0070;
+    --text-color: #e0e0e0;
+    --text-muted: #a0a0a0;
 }
-<<<<<<< HEAD
 
 body {
     font-family: Arial, sans-serif;
     line-height: 1.6;
-    background-color: #f4f4f4;
-    color: #333;
-=======
-.feature-icon {
-    font-size: 2.5rem;
-    color: #198754;
->>>>>>> cb24ff7 (New designs for webpages)
+    background-color: var(--dark-bg);
+    color: var(--text-color);
 }
+
+.navbar-light {
+    background-color: var(--darker-bg) !important;
+}
+
+.navbar-light .navbar-brand, 
+.navbar-light .nav-link {
+    color: var(--text-color);
+}
+
+.bg-light {
+    background-color: var(--card-bg) !important;
+}
+
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+.text-success {
+    color: var(--primary-light) !important;
+}
+
+.hero-section {
+    background: linear-gradient(135deg, var(--card-header-bg) 0%, var(--darker-bg) 100%);
+    padding: 80px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-section::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBmaWxsPSJyZ2JhKDkzLCAwLCAxNzksIDAuMSkiIGQ9Ik0wLDEwMCBMNTAsNTAgTDEwMCwxMDAgTDEwMCwxMDAgTDAsMTAwIFoiPjwvcGF0aD48L3N2Zz4=');
+    background-size: cover;
+    opacity: 0.2;
+    z-index: 0;
+}
+
+.hero-section .container {
+    position: relative;
+    z-index: 1;
+}
+
+.display-4, .display-5 {
+    color: #ffffff;
+}
+
+.lead {
+    color: var(--text-color);
+}
+
+.btn-success {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-success:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+}
+
+.card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--card-border-radius);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.5);
+    border-color: var(--primary-color);
+}
+
+.card-body {
+    color: var(--text-color);
+}
+
+.card-title {
+    color: #ffffff;
+}
+
+.shadow-sm {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.3) !important;
+}
+
+.shadow-lg {
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.5) !important;
+}
+
 .metrics-card {
-    background-color: #f8f9fa;
+    background-color: var(--card-header-bg);
     border-radius: 10px;
     padding: 20px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--card-shadow);
 }
+
 .accuracy-number {
     font-size: 3rem;
     font-weight: bold;
-    color: #198754;
+    color: var(--primary-light);
+}
+
+.feature-icon {
+    width: 50px;
+    height: 50px;
+    background-color: rgba(93, 0, 179, 0.2);
+    color: var(--primary-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.feature-icon i {
+    font-size: 1.5rem;
+}
+
+.border-0 {
+    border: 1px solid var(--border-color) !important;
+}
+
+.border-top {
+    border-top: 1px solid var(--border-color) !important;
+}
+
+footer {
+    background-color: var(--darker-bg);
+}
+
+footer a {
+    color: var(--primary-light) !important;
+    text-decoration: none;
+}
+
+footer a:hover {
+    color: var(--primary-hover) !important;
+    text-decoration: underline;
+}
+
+
+.img-fluid {
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-color);
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--darker-bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--accent-purple);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 50px 0;
+    }
+    
+    .accuracy-number {
+        font-size: 2.5rem;
+    }
 }
