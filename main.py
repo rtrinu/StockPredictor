@@ -72,7 +72,6 @@ def predictions():
                            stock_symbol=stock_symbol)
 
 def main():
-
     user_input = input("Input a Stock: ")
     user_stock = Stock.create(user_input)
     user_stock.create_and_train()
