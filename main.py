@@ -68,7 +68,8 @@ def start_training():
 def predictions():
     predictions = session.get('predictions', {})
     stock_symbol = session.get('stock_symbol', '')
-    return render_template('stock_prediction.html', prediction_data=predictions, stock_symbol=stock_symbol)
+    return render_template('stock_prediction.html', prediction_data=predictions, numerical_models=predictions.get('numerical_models', []),
+                           stock_symbol=stock_symbol)
 
 def main():
 
