@@ -2,11 +2,10 @@ import pandas as pd
 import math
 import os
 import pickle
-from sklearn.preprocessing import StandardScaler
+
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from sklearn.model_selection import train_test_split, GridSearchCV
-import matplotlib.pyplot as plt
 
 class RandomForest():
     def __init__(self, df, stock_name):
@@ -24,6 +23,7 @@ class RandomForest():
         self.load_and_process_data()
         self.load_model()
         self.existing_model()
+        self.evaluate_model()
         self.prediction()
         return self
 
@@ -56,6 +56,7 @@ class RandomForest():
 
     def train(self):
         self.model.fit(self.x_train, self.y_train)
+        return self.model
 
     def prediction(self):
         if self.model is not None:

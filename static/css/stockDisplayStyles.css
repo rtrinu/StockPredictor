@@ -175,6 +175,12 @@ body {
     transition: all 0.2s ease;
 }
 
+.action-btn:active{
+    background-color: var(--hover-bg);
+    color: #ffffff;
+    border-color: var(--accent-purple);
+}
+
 .btn-outline-secondary {
     color: var(--text-color);
     border-color: var(--border-color);

@@ -2,8 +2,10 @@ import pandas as pd
 import numpy as np
 import warnings
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import train_test_split
-from sklearn import metrics
+from sklearn.metrics import f1_score
+
 import os
 import pickle
 warnings.filterwarnings(action='ignore', category=UserWarning, module='sklearn')
@@ -35,15 +37,22 @@ class DecisionTreeModel():
         self.x_train,self.x_test,self.y_train,self.y_test = train_test_split(x,y,test_size=0.2, random_state=42)
 
     def build(self):
-        clf = DecisionTreeClassifier()
+        param_grid = {
+            'criterion': ['gini', 'entropy'],
+            'max_depth': [None, 5, 10, 15],
+            'min_samples_split': [2, 5, 10],
+            'min_samples_leaf': [1, 5, 10]
+        }
+        clf = GridSearchCV(DecisionTreeClassifier(), param_grid, cv=5)
         self.model = clf.fit(self.x_train,self.y_train)
+        return self.model
 
     def predict(self):
         self.y_pred = self.model.predict(self.x_test)
 
     def evaluate(self):
-        dict = {"Actual":self.y_test,"Predicted":self.y_pred}
-        print("Accuracy:", metrics.accuracy_score(self.y_test, self.y_pred))
+        f1 = f1_score(self.y_test, self.y_pred)
+        print(f"F1-Scores: {f1}")
 
     def predict_future(self):
             last_sequence = self.df[self.features].tail(self.lookback).values     
@@ -73,7 +82,7 @@ class DecisionTreeModel():
             future_dates.floor('T')
             
             forecast_df = pd.DataFrame({
-                'Predicted_Signal': future_predictions.flatten()
+                'Signal': future_predictions.flatten()
             }, index=future_dates)
             forecast_df.index = forecast_df.index.date
             

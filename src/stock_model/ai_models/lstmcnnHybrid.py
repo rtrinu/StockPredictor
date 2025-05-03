@@ -40,6 +40,7 @@ class CnnLSTMHybrid():
         self.load_model()
         self.load_and_preprocess_data()
         self.existing_model()
+        self.evaluate_model()
         self.predict_future_stocks()
         #self.compare_models()
         return self
@@ -105,6 +106,7 @@ class CnnLSTMHybrid():
             validation_data=(self.x_test, self.scaler.transform(self.y_test)),
             callbacks=[early_stop, reduce_lr],
         )
+        return history
 
     def baseline_mae(self):
         mean_price = np.mean(self.dataset[:self.training_data_len])

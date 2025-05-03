@@ -55,6 +55,7 @@ class TechnicalIndicatorUtil:
             strength += trend_signals['PRICE_VS_EMA']
             strength += rsi_signal
             return strength
+        
         signal_strength = calculate_signal_strength()
         df.loc[signal_strength >= 2, 'Signal'] = 1
         df.loc[signal_strength <= -2, 'Signal'] = -1

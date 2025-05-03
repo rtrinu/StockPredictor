@@ -1,7 +1,5 @@
 import pandas as pd
 import os
-import requests
-from bs4 import BeautifulSoup
 
 def fetch_stock_data() -> dict:
     """

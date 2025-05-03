@@ -23,6 +23,7 @@ class Stock:
         self._add_technical_indicators()
         self._add_technical_signals()
         self._get_news_articles()
+        self.print_df()
         return self
         #self.create_ai_training_df()
         #self.train_ai_models()
@@ -107,7 +108,7 @@ class Stock:
 
         
     def print_df(self):
-        print(self.df)
+        print(self.df.tail)
         print(self.news_df)
 
     def display_information(self):

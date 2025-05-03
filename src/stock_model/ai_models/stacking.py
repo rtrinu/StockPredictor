@@ -32,7 +32,7 @@ class StackedModel():
 
     def build_models(self):
         base_models = [('rf', RandomForestRegressor(n_estimators=100)),
-                       ('svc',SVR())]
+                       ('svr',SVR())]
         meta_model = LinearRegression()
         stacking_model = StackingRegressor(estimators=base_models, final_estimator=meta_model)
         self.model = stacking_model
@@ -48,17 +48,17 @@ class StackedModel():
         y_pred = self.predict()
         mse = mean_squared_error(self.y_test, y_pred)
         r2 = r2_score(self.y_test, y_pred)
-        #print(f"Mean Squared Error of Stacked Model: {mse:.2f}")
-        #print(f"R-squared Score of Stacked Model: {r2:.2f}")
+        print(f"Mean Squared Error of Stacked Model: {mse:.2f}")
+        print(f"R-squared Score of Stacked Model: {r2:.2f}")
     
     def predict_future(self,days=10):
         last_data_point = self.df.iloc[-1].drop(['Signal', 'Date'])
         future_predictions = []
         for _ in range(days):
             next_prediction = self.model.predict(last_data_point.values.reshape(1, -1))[0]
-            if 0.5 > next_prediction > -0.5:
+            if 0.5 >= next_prediction >= -0.5:
                 next_prediction = 0
-            elif next_prediction >= 0.5:
+            elif next_prediction > 0.5:
                 next_prediction = 1
             else:
                 next_prediction = -1 

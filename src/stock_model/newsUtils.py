@@ -56,7 +56,7 @@ class StockNews:
             to=end_date,
             language='en',
             sort_by='publishedAt',
-            page_size=1
+            page_size=100
         )
 
         news_data = []
