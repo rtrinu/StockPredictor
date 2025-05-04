@@ -132,6 +132,10 @@ header h1, header .lead {
 .form-text {
     color: var(--text-muted);
 }
+#stock_symbol::placeholder{
+    color: var(--text-muted);
+    opacity:1;
+}
 
 .form-control, .input-group-text {
     background-color: var(--input-bg);
