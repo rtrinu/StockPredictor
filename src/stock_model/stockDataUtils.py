@@ -13,7 +13,7 @@ class StockDataUtils:
         user_stock = self.stock_symbol.upper()
         self.stock_symbol, self.stock_name = get_stock_symbol_from_name(user_stock, self.stock_dict)
         if not self.stock_name:
-            raise AttributeError(f"Stock symbol or name '{self.user_stock}' not found in S&P 500.")
+            self.stock_symbol, self.stock_name = None, None
         return self.stock_symbol, self.stock_name
     
     def fetch_stock_data(self):
@@ -23,8 +23,9 @@ class StockDataUtils:
         start_date = end_date - timedelta(days=years_for_training * 365 + months_for_testing * 30)
         self.user_stock_validation()
         print(f"Fetching data for '{self.stock_name}'...")
-        self.df = yf.download(self.stock_symbol, start=start_date, end=end_date)
-        if self.df.empty:
+        if self.stock_symbol is not None:
+            self.df = yf.download(self.stock_symbol, start=start_date, end=end_date)
+        if self.df is None or self.df.empty:
             print(f"No data found for {self.stock_name}")
             return None
         self.df.columns = self.df.columns.droplevel(1)

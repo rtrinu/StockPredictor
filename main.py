@@ -38,6 +38,8 @@ def get_stock_data():
         return "Input a valid symbol", 400
     
     user_stock = Stock.create(stock_symbol)
+    if user_stock is None:
+        return redirect(url_for('stock_input'))
     user_stock_symbol = user_stock.return_stock_symbol()
     stock_data = user_stock.display_information()
     stock_plot = user_stock.display_plot()

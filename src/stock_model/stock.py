@@ -20,6 +20,9 @@ class Stock:
     def create(cls,stock_symbol):
         self = cls(stock_symbol)
         self._gather_data()
+        if self.df == None:
+            print("No valid Stock Symbol")
+            return None
         self._add_technical_indicators()
         self._add_technical_signals()
         self._get_news_articles()
@@ -39,7 +42,9 @@ class Stock:
         self.df = self.stock_data_utils.df
         if self.df is None:
             print("Failed to gather data")
-        self.df = pd.DataFrame(self.df)
+            self.stock_symbol = None
+            self.df = None
+        #self.df = pd.DataFrame(self.df)
 
     def _add_technical_indicators(self):
         if self.df is None:
@@ -72,7 +77,6 @@ class Stock:
         
         self.hybrid = CnnLSTMHybrid.create(self.df, self.stock_name)
         
-        #hybrid.plot_prediction()
 
         self.random_forest = RandomForest.create(self.df, self.stock_name)
         
