@@ -19,9 +19,8 @@ class Stock:
     @classmethod
     def create(cls,stock_symbol):
         self = cls(stock_symbol)
-        self._gather_data()
-        if self.df == None:
-            print("No valid Stock Symbol")
+        symbol = self._gather_data()
+        if symbol == None:
             return None
         self._add_technical_indicators()
         self._add_technical_signals()
@@ -44,6 +43,7 @@ class Stock:
             print("Failed to gather data")
             self.stock_symbol = None
             self.df = None
+        return self.stock_symbol
         #self.df = pd.DataFrame(self.df)
 
     def _add_technical_indicators(self):

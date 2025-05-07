@@ -24,7 +24,7 @@ def generate_stock_plot():
         return send_file(filepath, mimetype='image/png')
     except Exception as e:
         print(f"Error generating stock chart: {e}")
-        return send_file('path/to/error/image.png', mimetype='image/png'), 500
+        return send_file('app\static.png', mimetype='image/png'), 500
 
 @app.route('/stock-input')
 def stock_input():
@@ -35,7 +35,7 @@ def stock_input():
 def get_stock_data():
     stock_symbol = request.args.get('stock_symbol','').strip().upper()
     if not stock_symbol:
-        return "Input a valid symbol", 400
+        return redirect(url_for('stock_input'))
     
     user_stock = Stock.create(stock_symbol)
     if user_stock is None:

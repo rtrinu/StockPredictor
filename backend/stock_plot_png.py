@@ -63,4 +63,4 @@ def plot_close_data():
     plt.savefig(filepath)
     plt.close()  
 
-    return filename, filepath
+    return filepath

@@ -3,5 +3,5 @@ def simple_averages(rf,hybrid):
     return average
 
 def weighted_averages(rf,hybrid):
-    weighted_average = (rf * 0.4) + (hybrid * 0.6 )
+    weighted_average = (rf * 0.25) + (hybrid * 0.75 )
     return weighted_average
